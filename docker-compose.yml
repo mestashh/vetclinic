@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app:
+    image: webdevops/php-nginx:8.2
+    container_name: vetclinic-app
+    ports:
+      - "8080:80"
+    volumes:
+      - ./backend:/app
+    environment:
+      WEB_DOCUMENT_ROOT: /app/public
+    networks:
+      - vetclinic-net
+
+  db:
+    image: mysql:8.0
+    container_name: vetclinic-db
+    ports:
+      - "3037:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: vetclinic
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - vetclinic-net
+
+  adminer:
+    image: adminer
+    container_name: vetclinic-adminer
+    ports:
+      - "8081:8080"
+    networks:
+      - vetclinic-net
+
+networks:
+  vetclinic-net:
+    driver: bridge
+
+volumes:
+  mysql-data:
