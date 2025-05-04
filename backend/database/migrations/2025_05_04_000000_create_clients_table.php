@@ -1,0 +1,27 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+class CreateClientsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('clients', function (Blueprint $table) {
+            $table->id();
+            $table->string('first_name');             // Имя
+            $table->string('middle_name')->nullable(); // Отчество
+            $table->string('last_name');              // Фамилия
+            $table->string('phone')->nullable();      // Телефон
+            $table->string('email')->nullable();      // Почта
+            $table->string('address')->nullable();    // Адрес
+            $table->timestamps();
+        });
+    }
+
+    public function down()
+    {
+        Schema::dropIfExists('clients');
+    }
+}
