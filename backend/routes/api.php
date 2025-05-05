@@ -7,37 +7,23 @@ use App\Http\Controllers\Api\PetController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\VeterinarianController;
-
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Здесь регистрируются все маршруты для API вашего приложения.
-| Все они автоматически получат префикс /api.
-|
-*/
-
-// CRUD для клиентов
-Route::apiResource('clients', ClientController::class);
-
-// CRUD для животных
-Route::apiResource('animals', PetController::class);
-
-// CRUD для приёмов
-Route::apiResource('appointments', AppointmentController::class);
-
-// CRUD для процедур
-Route::apiResource('procedures', ServiceController::class);
-
-// CRUD для медикаментов
-Route::apiResource('medications', VeterinarianController::class);
-
+use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 
+Route::middleware(['auth:sanctum', 'admin'])->group(function () {
+    Route::get('/admin', [AdminController::class, 'index']);
+});
+
+
+
+Route::apiResource('clients', ClientController::class);
+Route::apiResource('animals', PetController::class);
+Route::apiResource('appointments', AppointmentController::class);
+Route::apiResource('procedures', ServiceController::class);
+Route::apiResource('medications', VeterinarianController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');;
 });

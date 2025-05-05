@@ -77,10 +77,6 @@ return [
     */
 
     'providers' => [
-
-        /*
-         * Laravel Framework Service Providers...
-         */
         Illuminate\Auth\AuthServiceProvider::class,
         Illuminate\Broadcasting\BroadcastServiceProvider::class,
         Illuminate\Bus\BusServiceProvider::class,
@@ -103,19 +99,10 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-
-        /*
-         * Package Service Providers...
-         */
-        // Laravel Sanctum
-        //Laravel\Sanctum\SanctumServiceProvider::class,
-
-        /*
-         * Application Service Providers...
-         */
         App\Providers\AppServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Laravel\Sanctum\SanctumServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
     ],
 
     /*
@@ -128,7 +115,7 @@ return [
     */
 
     'aliases' => [
-
+        'Sanctum' => Laravel\Sanctum\Sanctum::class,
         'App'       => Illuminate\Support\Facades\App::class,
         'Arr'       => Illuminate\Support\Arr::class,
         'Artisan'   => Illuminate\Support\Facades\Artisan::class,
