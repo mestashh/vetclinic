@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
     build: {
@@ -14,7 +15,15 @@ export default defineConfig({
             }
         }
     },
+    plugins: [
+        laravel({
+            input: ['src/main.js'],
+            refresh: true,
+        }),
+    ],
     server: {
-        port: 5173,
+        proxy: {
+            '/api': 'http://localhost:8080',
+        },
     },
 });
