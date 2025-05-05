@@ -17,10 +17,6 @@ class Client extends Model
         'email',
         'address',
     ];
-
-    /**
-     * (Опционально) Свойство full_name для сборки из трёх частей
-     */
     public function getFullNameAttribute(): string
     {
         return trim("{$this->last_name} {$this->first_name} {$this->middle_name}");

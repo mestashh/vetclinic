@@ -19,6 +19,6 @@
     @yield('content')
 </main>
 
-<script type="module" src="{{ asset('frontend/main.js') }}"></script>
+
 </body>
 </html>

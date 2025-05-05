@@ -20,7 +20,7 @@ Route::apiResource('clients', ClientController::class);
 Route::apiResource('animals', PetController::class);
 Route::apiResource('appointments', AppointmentController::class);
 Route::apiResource('procedures', ServiceController::class);
-Route::apiResource('medications', VeterinarianController::class);
+Route::apiResource('veterinarians', VeterinarianController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 

@@ -9,6 +9,19 @@ use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    // Показ страницы авторизации
+    public function showLogin()
+    {
+        return view('auth.login');
+    }
+
+    // Показ страницы регистрации
+    public function showRegister()
+    {
+        return view('auth.register');
+    }
+
+    // Регистрация пользователя и создание токена
     public function register(Request $request)
     {
         $request->validate([
@@ -28,6 +41,7 @@ class AuthController extends Controller
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }
 
+    // Вход пользователя и создание токена
     public function login(Request $request)
     {
         $request->validate([
@@ -46,6 +60,7 @@ class AuthController extends Controller
         return response()->json(['access_token' => $token, 'token_type' => 'Bearer']);
     }
 
+    // Выход и удаление текущего токена
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();

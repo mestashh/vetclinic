@@ -16,9 +16,7 @@ class Veterinarian extends Model
         'email',
     ];
 
-    /**
-     * У ветеринара может быть несколько приёмов
-     */
+
     public function appointments()
     {
         return $this->hasMany(Appointment::class);

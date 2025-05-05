@@ -15,9 +15,7 @@ class Service extends Model
         'price',
     ];
 
-    /**
-     * Связь many-to-many с записями на приём
-     */
+
     public function appointments()
     {
         return $this->belongsToMany(

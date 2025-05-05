@@ -17,17 +17,12 @@ class Pet extends Model
         'client_id',
     ];
 
-    /**
-     * Каждый питомец принадлежит одному клиенту
-     */
+
     public function client()
     {
         return $this->belongsTo(Client::class);
     }
 
-    /**
-     * У питомца может быть несколько приёмов
-     */
     public function appointments()
     {
         return $this->hasMany(Appointment::class);
