@@ -6,7 +6,13 @@
     <div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-xl font-bold mb-4">Вход в аккаунт</h2>
 
-        <form action="{{ route('login') }}" method="POST">
+        @if($errors->any())
+            <div class="text-red-500 mb-4">
+                {{ $errors->first('email') }}
+            </div>
+        @endif
+
+        <form action="{{ route('login.post') }}" method="POST">
             @csrf
             <div class="mb-4">
                 <label>Email</label>

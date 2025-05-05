@@ -6,7 +6,17 @@
     <div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-xl font-bold mb-4">Создание аккаунта</h2>
 
-        <form action="{{ route('register') }}" method="POST">
+        @if($errors->any())
+            <div class="text-red-500 mb-4">
+                <ul>
+                    @foreach($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
+
+        <form action="{{ route('register.post') }}" method="POST">
             @csrf
             <div class="mb-4">
                 <label>Имя</label>
