@@ -1,7 +1,7 @@
-@extends('layouts.main')
+@extends('layouts.app')
 
-@section('title', 'Главная')
+@section('title', 'Главная страница')
 
 @section('content')
-    <h1>Добро пожаловать в Ветеринарную клинику!</h1>
+    <h1 class="text-3xl font-bold">Добро пожаловать в Ветеринарную клинику!</h1>
 @endsection

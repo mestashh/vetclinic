@@ -1,29 +1,20 @@
 import { defineConfig } from 'vite';
 import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
 
 export default defineConfig({
-    build: {
-        outDir: '../backend/public/frontend',
-        emptyOutDir: true,
-        rollupOptions: {
-            input: {
-                main: './index.html',
-            },
-            output: {
-                entryFileNames: '[name].js',
-                assetFileNames: '[name].[ext]',
-            }
-        }
-    },
     plugins: [
+        vue(),
         laravel({
-            input: ['src/main.js'],
+            // Точки входа — ваш "frontend/src"
+            input: [
+                'src/app.css',
+                'src/app.js',
+            ],
             refresh: true,
+            // Здесь указано, куда писать статику и манифест
+            publicDirectory: '../backend/public',
+            outDir: '../backend/public/build',
         }),
     ],
-    server: {
-        proxy: {
-            '/api': 'http://localhost:8080',
-        },
-    },
 });

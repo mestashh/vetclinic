@@ -1,9 +1,10 @@
-import './style.css'
+import './app.css'
 import './clients.js';
 import './appointments.js';
 import './loadData.js';
 
 console.log('Frontend JS loaded.');
-document.querySelector('#app').innerHTML = `
-  <h1>Добро пожаловать в Ветеринарную клинику!</h1>
-`
+const app = document.getElementById('app');
+if (app) {
+    app.innerHTML = '...';
+}
