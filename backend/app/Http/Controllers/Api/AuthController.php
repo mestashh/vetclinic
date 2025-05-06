@@ -20,7 +20,6 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    // Регистрация с редиректом после успешного входа
     public function register(Request $request)
     {
         $request->validate([
@@ -40,7 +39,6 @@ class AuthController extends Controller
         return redirect()->route('home');
     }
 
-    // Авторизация с редиректом и ошибками
     public function login(Request $request)
     {
         $credentials = $request->validate([
@@ -58,6 +56,7 @@ class AuthController extends Controller
         ])->onlyInput('email');
     }
 
+    // Вот этот метод должен быть именно таким
     public function logout(Request $request)
     {
         Auth::logout();

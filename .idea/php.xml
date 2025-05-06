@@ -227,6 +227,7 @@
   <component name="PhpUnit">
     <phpunit_settings>
       <phpunit_by_interpreter interpreter_id="ba5c65d1-a42d-449b-9a3c-b375a0f60aaa" configuration_file_path="C:/Users/Ruslan/PhpstormProjects/vetclinic/backend/phpunit.xml" custom_loader_path="C:/Users/Ruslan/PhpstormProjects/vetclinic/backend/vendor/autoload.php" use_configuration_file="true" />
+      <PhpUnitSettings configuration_file_path="$PROJECT_DIR$/backend/phpunit.xml" custom_loader_path="$PROJECT_DIR$/backend/vendor/autoload.php" use_configuration_file="true" />
     </phpunit_settings>
   </component>
   <component name="PsalmOptionsConfiguration">

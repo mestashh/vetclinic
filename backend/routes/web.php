@@ -5,44 +5,37 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PetController;
 use App\Http\Controllers\Api\ServiceController;
 
-Route::get('/', function () {
-    return view('home');
-})->name('home');
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+| Все маршруты веб-интерфейса автоматически получают middleware 'web'
+*/
 
-Route::get('/clients', function () {
-    return view('clients');
-})->name('clients.index');
-
-Route::get('/appointments', function () {
-    return view('appointments');
-})->name('appointments.index');
-
-Route::get('/services', [ServiceController::class, 'index'])->name('services.index');
-Route::get('/pets', [PetController::class, 'index'])->name('pets.index');
+// 1) Гостевые страницы: главная, вход/регистрация
+Route::get('/', fn() => view('home'))->name('home');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-
-Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 
-Route::middleware(['auth'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
+Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 
-    Route::get('/client/dashboard', function () {
-        return view('client.dashboard');
-    })->name('client.dashboard');
+// 2) Защищённая зона — только для авторизованных
+Route::middleware('auth')->group(function () {
+    // 2.1) Статические страницы через Blade
+    Route::view('/clients',       'layouts.clients')->name('clients');
+    Route::view('/appointments',  'layouts.appointments')->name('appointments');
+    Route::view('/pets',          'layouts.pets')->name('pets');
+    Route::view('/services',      'layouts.services')->name('services');
+    Route::view('/veterinarians', 'layouts.veterinarians')->name('veterinarians');
 
-    Route::get('/veterinarian/dashboard', function () {
-        return view('veterinarian.dashboard');
-    })->name('veterinarian.dashboard');
+    // 2.2) Дашборды
+    Route::view('/admin/dashboard',        'layouts.admin')->name('admin.dashboard');
+    Route::view('/client/dashboard',       'client.dashboard')->name('client.dashboard');
+    Route::view('/veterinarian/dashboard','veterinarian.dashboard')->name('veterinarian.dashboard');
 
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    // 2.3) Выход из системы
+    Route::post('/logout', [AuthController::class, 'logout'])
+        ->name('logout');
 });
-Route::view('/appointments', 'layouts.appointments')->name('appointments');
-Route::view('/pets', 'layouts.pets')->name('pets');
-Route::view('/services', 'layouts.services')->name('services');
-Route::view('/veterinarians', 'layouts.veterinarians')->name('veterinarians');
-Route::view('/clients', 'layouts.clients')->name('clients');
