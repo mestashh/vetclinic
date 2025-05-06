@@ -2,14 +2,17 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('title', 'Ветеринарная клиника')</title>
-    @vite(['src/app.css', 'src/app.js'])
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
+    <title>@yield('title', 'VetClinic')</title>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col">
-@include('layouts.navigation')
+<body>
+@include('layouts.navigation') <!-- Навигация сверху -->
 
-<div id="app" class="flex-grow container mx-auto p-6">
-    @yield('content')
+<div class="p-4">
+    @yield('content') <!-- Основной контент -->
 </div>
+
+<script src="{{ asset('js/app.js') }}"></script>
 </body>
 </html>
