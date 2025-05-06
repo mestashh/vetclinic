@@ -1,22 +1,38 @@
 @extends('layouts.app')
 
+@section('title', 'Клиенты')
+
 @section('content')
     <div class="p-4">
-        <h1 class="text-3xl font-bold mb-4">Клиенты</h1>
-        <ul class="space-y-2">
-            @foreach($clients as $client)
-                <li class="border p-3 rounded">
-                    <strong>{{ $client->first_name }} {{ $client->middle_name }} {{ $client->last_name }}</strong><br>
-                    Email: {{ $client->email }}<br>
-                    Телефон: {{ $client->phone }}<br>
-                    Адрес: {{ $client->address }}
-                </li>
-            @endforeach
+        <h1 class="text-2xl font-semibold mb-4">Список клиентов</h1>
 
-            @if($clients->isEmpty())
-                <li>Клиентов пока нет.</li>
-            @endif
-        </ul>
+        <div class="overflow-x-auto">
+            <table class="min-w-full bg-white shadow rounded-lg">
+                <thead>
+                <tr class="bg-gray-100">
+                    <th class="px-4 py-2 text-left">ID</th>
+                    <th class="px-4 py-2 text-left">ФИО</th>
+                    <th class="px-4 py-2 text-left">Email</th>
+                    <th class="px-4 py-2 text-left">Телефон</th>
+                    <th class="px-4 py-2 text-left">Адрес</th>
+                </tr>
+                </thead>
+                <tbody>
+                @forelse($clients as $client)
+                    <tr class="border-t">
+                        <td class="px-4 py-2">{{ $client->id }}</td>
+                        <td class="px-4 py-2">{{ $client->first_name }} {{ $client->last_name }}</td>
+                        <td class="px-4 py-2">{{ $client->email }}</td>
+                        <td class="px-4 py-2">{{ $client->phone }}</td>
+                        <td class="px-4 py-2">{{ $client->address }}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td class="px-4 py-2 text-center" colspan="5">Клиентов пока нет.</td>
+                    </tr>
+                @endforelse
+                </tbody>
+            </table>
+        </div>
     </div>
 @endsection
-
