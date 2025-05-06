@@ -41,3 +41,8 @@ Route::middleware(['auth'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 });
+Route::view('/appointments', 'layouts.appointments')->name('appointments');
+Route::view('/pets', 'layouts.pets')->name('pets');
+Route::view('/services', 'layouts.services')->name('services');
+Route::view('/veterinarians', 'layouts.veterinarians')->name('veterinarians');
+
