@@ -2,13 +2,12 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Appointment extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'client_id',
         'pet_id',
@@ -17,28 +16,27 @@ class Appointment extends Model
         'status',
     ];
 
-    public function client()
+    // Связь «один ко многим» с клиентом
+    public function client(): BelongsTo
     {
         return $this->belongsTo(Client::class);
     }
 
-    public function pet()
+    // Связь «один ко многим» с питомцем
+    public function pet(): BelongsTo
     {
         return $this->belongsTo(Pet::class);
     }
 
-    public function veterinarian()
+    // Связь «один ко многим» с ветеринаром
+    public function veterinarian(): BelongsTo
     {
         return $this->belongsTo(Veterinarian::class);
     }
 
-    public function services()
+    // Связь «многие ко многим» с услугами через таблицу appointment_service
+    public function services(): BelongsToMany
     {
-        return $this->belongsToMany(
-            Service::class,
-            'appointment_service',
-            'appointment_id',
-            'service_id'
-        );
+        return $this->belongsToMany(Service::class, 'appointment_service');
     }
 }

@@ -35,9 +35,17 @@ class PageController extends Controller
     // Список приёмов
     public function appointments()
     {
-        $appointments = Appointment::with(['client','pet','veterinarian'])->get();
+        // eager‐load всех нужных связей, включая services()
+        $appointments = Appointment::with([
+            'client',
+            'pet',
+            'veterinarian',
+            'services',
+        ])->get();
+
         return view('pages.appointments', compact('appointments'));
     }
+
 
     // Список услуг (процедур)
     public function services()
