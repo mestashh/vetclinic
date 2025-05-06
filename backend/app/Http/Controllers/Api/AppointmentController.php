@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers\Api;
-
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
@@ -10,48 +9,52 @@ class AppointmentController extends Controller
 {
     public function index()
     {
-        return Appointment::with(['client','pet','veterinarian','services'])->get();
-    }
-
-    public function show(Appointment $appointment)
-    {
-        return $appointment->load(['client','pet','veterinarian','services']);
+        return view('pages.appointments', [
+            'appointments' => Appointment::with(['client','pet','veterinarian','services'])->get(),
+            'clients'      => \App\Models\Client::all(),
+            'pets'         => \App\Models\Pet::all(),
+            'vets'         => \App\Models\Veterinarian::all(),
+            'services'     => \App\Models\Service::all(),
+        ]);
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
+            'scheduled_at'    => 'required|date',
             'client_id'       => 'required|exists:clients,id',
             'pet_id'          => 'required|exists:pets,id',
             'veterinarian_id' => 'required|exists:veterinarians,id',
-            'scheduled_at'    => 'required|date',
-            'status'          => 'sometimes|string',
+            'services'        => 'array',
+            'services.*'      => 'exists:services,id',
+            'status'          => 'required|string',
         ]);
-
-        $appointment = Appointment::create($data);
-
-        return response()->json($appointment, 201);
+        $appt = Appointment::create($request->only(['scheduled_at','client_id','pet_id','veterinarian_id','status']));
+        $appt->services()->sync($data['services'] ?? []);
+        $appt->load(['client','pet','veterinarian','services']);
+        return response()->json($appt, 201);
     }
 
     public function update(Request $request, Appointment $appointment)
     {
         $data = $request->validate([
-            'client_id'       => 'sometimes|required|exists:clients,id',
-            'pet_id'          => 'sometimes|required|exists:pets,id',
-            'veterinarian_id' => 'sometimes|required|exists:veterinarians,id',
-            'scheduled_at'    => 'sometimes|required|date',
-            'status'          => 'sometimes|string',
+            'scheduled_at'    => 'required|date',
+            'client_id'       => 'required|exists:clients,id',
+            'pet_id'          => 'required|exists:pets,id',
+            'veterinarian_id' => 'required|exists:veterinarians,id',
+            'services'        => 'array',
+            'services.*'      => 'exists:services,id',
+            'status'          => 'required|string',
         ]);
-
-        $appointment->update($data);
-
-        return $appointment;
+        $appointment->update($request->only(['scheduled_at','client_id','pet_id','veterinarian_id','status']));
+        $appointment->services()->sync($data['services'] ?? []);
+        $appointment->load(['client','pet','veterinarian','services']);
+        return response()->json($appointment);
     }
 
     public function destroy(Appointment $appointment)
     {
         $appointment->delete();
-
-        return response()->noContent();
+        return response()->json(['id' => $appointment->id]);
     }
 }
