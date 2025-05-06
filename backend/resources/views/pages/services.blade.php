@@ -1,10 +1,15 @@
 @extends('layouts.app')
-
-@section('title', 'Услуги')
-
+@section('title','Услуги клиники')
 @section('content')
     <div class="p-4">
-        <h1 class="text-2xl font-semibold mb-4">Услуги клиники</h1>
+
+        <form method="GET" action="{{ route('services') }}" class="mb-4">
+            <div class="flex">
+                <input type="text" name="search" value="{{ $search ?? '' }}"
+                       placeholder="Поиск по названию услуги" class="border rounded p-2 flex-grow mr-2">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Поиск</button>
+            </div>
+        </form>
 
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white shadow rounded-lg">
@@ -26,7 +31,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td class="px-4 py-2 text-center" colspan="4">Услуг пока нет.</td>
+                        <td colspan="4" class="px-4 py-2 text-center">Услуг пока нет.</td>
                     </tr>
                 @endforelse
                 </tbody>

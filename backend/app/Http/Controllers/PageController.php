@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Client;
 use App\Models\Pet;
 use App\Models\Appointment;
@@ -12,52 +11,69 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    // Главная
     public function home()
     {
-        return view('pages.home');
+        return view('home');
     }
 
-    // Список клиентов
-    public function clients()
+    public function clients(Request $request)
     {
-        $clients = Client::all();
-        return view('pages.clients', compact('clients'));
+        $search = $request->input('search');
+        $query = Client::query();
+        if ($search) {
+            $query->where(function($q) use($search) {
+                $q->where('first_name', 'like', "%{$search}%")
+                    ->orWhere('middle_name', 'like', "%{$search}%")
+                    ->orWhere('last_name', 'like', "%{$search}%");
+            });
+        }
+        $clients = $query->get();
+        return view('pages.clients', compact('clients','search'));
     }
 
-    // Список питомцев
-    public function pets()
+    public function pets(Request $request)
     {
-        $pets = Pet::all();
-        return view('pages.pets', compact('pets'));
+        $search = $request->input('search');
+        $query = Pet::with('client');
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+        $pets = $query->get();
+        return view('pages.pets', compact('pets','search'));
     }
 
-    // Список приёмов
-    public function appointments()
+    public function appointments(Request $request)
     {
-        // eager‐load всех нужных связей, включая services()
-        $appointments = Appointment::with([
-            'client',
-            'pet',
-            'veterinarian',
-            'services',
-        ])->get();
-
-        return view('pages.appointments', compact('appointments'));
+        $date = $request->input('date');
+        $query = Appointment::with(['client','pet','veterinarian','services']);
+        if ($date) {
+            $query->whereDate('scheduled_at', $date);
+        }
+        $appointments = $query->get();
+        return view('pages.appointments', compact('appointments','date'));
     }
 
-
-    // Список услуг (процедур)
-    public function services()
+    public function services(Request $request)
     {
-        $services = Service::all();
-        return view('pages.services', compact('services'));
+        $search = $request->input('search');
+        $query = Service::query();
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+        $services = $query->get();
+        return view('pages.services', compact('services','search'));
     }
 
-    // Список ветеринаров
-    public function veterinarians()
+    public function veterinarians(Request $request)
     {
-        $veterinarians = Veterinarian::all();
-        return view('pages.veterinarians', compact('veterinarians'));
+        $search = $request->input('search');
+        $query = Veterinarian::query();
+        if ($search) {
+            $query->where('first_name','like',"%{$search}%")
+                ->orWhere('last_name','like',"%{$search}%")
+                ->orWhere('specialty','like',"%{$search}%");
+        }
+        $veterinarians = $query->get();
+        return view('pages.veterinarians', compact('veterinarians','search'));
     }
 }

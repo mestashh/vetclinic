@@ -1,10 +1,15 @@
 @extends('layouts.app')
-
-@section('title', 'Питомцы')
-
+@section('title','Питомцы')
 @section('content')
     <div class="p-4">
-        <h1 class="text-2xl font-semibold mb-4">Список питомцев</h1>
+
+        <form method="GET" action="{{ route('pets') }}" class="mb-4">
+            <div class="flex">
+                <input type="text" name="search" value="{{ $search ?? '' }}"
+                       placeholder="Поиск по имени питомца" class="border rounded p-2 flex-grow mr-2">
+                <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Поиск</button>
+            </div>
+        </form>
 
         <div class="overflow-x-auto">
             <table class="min-w-full bg-white shadow rounded-lg">
@@ -14,7 +19,7 @@
                     <th class="px-4 py-2 text-left">Имя</th>
                     <th class="px-4 py-2 text-left">Вид</th>
                     <th class="px-4 py-2 text-left">Порода</th>
-                    <th class="px-4 py-2 text-left">Дата рождения</th>
+                    <th class="px-4 py-2 text-left">Дата рожд.</th>
                     <th class="px-4 py-2 text-left">Владелец</th>
                 </tr>
                 </thead>
@@ -30,7 +35,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td class="px-4 py-2 text-center" colspan="6">Питомцев пока нет.</td>
+                        <td colspan="6" class="px-4 py-2 text-center">Питомцев пока нет.</td>
                     </tr>
                 @endforelse
                 </tbody>
