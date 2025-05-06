@@ -45,4 +45,4 @@ Route::view('/appointments', 'layouts.appointments')->name('appointments');
 Route::view('/pets', 'layouts.pets')->name('pets');
 Route::view('/services', 'layouts.services')->name('services');
 Route::view('/veterinarians', 'layouts.veterinarians')->name('veterinarians');
-
+Route::view('/clients', 'layouts.clients')->name('clients');

@@ -2,7 +2,7 @@
     <div style="display:flex; justify-content:space-between; align-items:center;">
         <ul style="display:flex; flex-direction:row; gap:1rem; list-style:none; margin:0; padding:0;">
             <li><a href="{{ route('home') }}" style="text-decoration:none; color:white;">Главная</a></li>
-            <li><a href="{{ route('clients.index') }}" style="text-decoration:none; color:white;">Клиенты</a></li>
+            <li><a href="{{ route('clients') }}" style="text-decoration:none; color:white;">Клиенты</a></li>
             <li><a href="{{ route('appointments') }}" style="text-decoration:none; color:white;">Приёмы</a></li>
             <li><a href="{{ route('pets') }}" style="text-decoration:none; color:white;">Питомцы</a></li>
             <li><a href="{{ route('services') }}" style="text-decoration:none; color:white;">Услуги</a></li>
