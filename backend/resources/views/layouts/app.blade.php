@@ -10,9 +10,6 @@
 <body>
 @include('layouts.navigation')
 
-<div class="p-4">
-    @yield('content')
-</div>
 
 </body>
 </html>

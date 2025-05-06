@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PetController;
 use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\PageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,14 +25,13 @@ Route::post('/register', [AuthController::class, 'register'])->name('register.po
 // 2) Защищённая зона — только для авторизованных
 Route::middleware('auth')->group(function () {
     // 2.1) Статические страницы через Blade
-    Route::view('/clients',       'layouts.clients')->name('clients');
-    Route::view('/appointments',  'layouts.appointments')->name('appointments');
-    Route::view('/pets',          'layouts.pets')->name('pets');
-    Route::view('/services',      'layouts.services')->name('services');
-    Route::view('/veterinarians', 'layouts.veterinarians')->name('veterinarians');
+    Route::get('/clients',       [PageController::class, 'clients'])->name('clients');
+    Route::get('/pets',          [PageController::class, 'pets'])->name('pets');
+    Route::get('/appointments',  [PageController::class, 'appointments'])->name('appointments');
+    Route::get('/services',      [PageController::class, 'services'])->name('services');
+    Route::get('/veterinarians', [PageController::class, 'veterinarians'])->name('veterinarians');
 
     // 2.2) Дашборды
-    Route::view('/admin/dashboard',        'layouts.admin')->name('admin.dashboard');
     Route::view('/client/dashboard',       'client.dashboard')->name('client.dashboard');
     Route::view('/veterinarian/dashboard','veterinarian.dashboard')->name('veterinarian.dashboard');
 
