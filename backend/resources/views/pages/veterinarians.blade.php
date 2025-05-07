@@ -3,28 +3,36 @@
 @section('title', 'Ветеринары')
 
 @section('content')
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Ветеринары</h2>
-        <button
-            id="addVeterinarianBtn"
-            class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-            <i class="fa-solid fa-plus"></i>
-        </button>
-    </div>
+    <div class="layout-center">
+        <div class="layout-container">
 
-    <div class="overflow-x-auto">
-        <table
-            id="vetsTable"
-            class="min-w-full bg-white shadow rounded">
-            <thead class="bg-gray-100">
-            <tr>
-                <th class="px-4 py-2">Фамилия</th>
-                <th class="px-4 py-2">Имя</th>
-                <th class="px-4 py-2">Отчество</th>
-                <th class="px-4 py-2">Действия</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+            <h1 style="text-align: center; font-size: 1.5rem; font-weight: bold;">Ветеринары</h1>
+            <div class="centered-btn">
+                <button id="addVetBtn" class="btn-primary">Добавить ветеринара</button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="vetsTable" class="table-clean">
+                    <thead>
+                    <tr>
+                        <th>Фамилия</th>
+                        <th>Имя</th>
+                        <th>Отчество</th>
+                        <th>Специализация</th>
+                        <th>Телефон</th>
+                        <th>Email</th>
+                        <th>Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/veterinarians.js') }}"></script>
+    <script>initVeterinarians();</script>
 @endsection

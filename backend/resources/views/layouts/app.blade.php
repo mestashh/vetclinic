@@ -11,14 +11,16 @@
     {{-- CHANGED: пути к ассетам --}}
     @vite(['src/app.css', 'src/app.js'])
 </head>
-<body style="background-color: #909091;">
+<body class="bg-gray-700 text-white" style="background-color: #909091;">
 
 {{-- навигация --}}
 @include('layouts.navigation')
 
 {{-- основной контент --}}
-<main class="container mx-auto px-4 py-6">
-    @yield('content')
+<main class="flex justify-center px-4 py-6">
+    <div class="w-full max-w-5xl">
+        @yield('content')
+    </div>
 </main>
 
 </body>

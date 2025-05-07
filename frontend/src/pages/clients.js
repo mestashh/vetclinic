@@ -9,7 +9,7 @@ export function initClients() {
 
     function loadClients() {
         axios.get('/api/clients').then(({ data }) => {
-            const html = data.map(c => `
+            const html = (data.data || []).map(c => `
         <tr data-id="${c.id}" class="bg-white border-b hover:bg-gray-50">
           <td class="px-4 py-2"><input disabled value="${c.last_name}"  class="client-input w-full border-none"></td>
           <td class="px-4 py-2"><input disabled value="${c.first_name}" class="client-input w-full border-none"></td>

@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\VeterinarianController;
 Route::get('/clients/{client_id}/pets', [ClientController::class, 'pets']);
 Route::get('/clients', [ClientController::class, 'index']);
 Route::get('/veterinarians', [VeterinarianController::class, 'index']);
+Route::apiResource('clients', ClientController::class);
+
 
 // Питомцы, приёмы, услуги, ветеринары
 Route::apiResource('animals',      PetController::class);

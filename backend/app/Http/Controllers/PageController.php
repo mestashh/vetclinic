@@ -11,12 +11,6 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-
-    public function showAppointmentsPage()
-    {
-        return view('pages.appointments');
-    }
-
     public function index()
     {
         return view('home');
@@ -28,7 +22,7 @@ class PageController extends Controller
         $query = Client::query();
 
         if ($search) {
-            $query->where(function($q) use($search) {
+            $query->where(function ($q) use ($search) {
                 $q->where('first_name', 'like', "%{$search}%")
                     ->orWhere('middle_name', 'like', "%{$search}%")
                     ->orWhere('last_name', 'like', "%{$search}%");
@@ -36,7 +30,6 @@ class PageController extends Controller
         }
 
         $clients = $query->get();
-
         return view('pages.clients', compact('clients', 'search'));
     }
 
@@ -44,45 +37,53 @@ class PageController extends Controller
     {
         $search = $request->input('search');
         $query = Pet::with('client');
+
         if ($search) {
             $query->where('name', 'like', "%{$search}%");
         }
+
         $pets = $query->get();
-        return view('pages.pets', compact('pets','search'));
+        return view('pages.pets', compact('pets', 'search'));
     }
 
     public function appointments(Request $request)
     {
         $date = $request->input('date');
-        $query = Appointment::with(['client','pet','veterinarian','services']);
+        $query = Appointment::with(['client', 'pet', 'veterinarian', 'services']);
+
         if ($date) {
             $query->whereDate('scheduled_at', $date);
         }
+
         $appointments = $query->get();
-        return view('pages.appointments', compact('appointments','date'));
+        return view('pages.appointments', compact('appointments', 'date'));
     }
 
     public function services(Request $request)
     {
         $search = $request->input('search');
         $query = Service::query();
+
         if ($search) {
             $query->where('name', 'like', "%{$search}%");
         }
+
         $services = $query->get();
-        return view('pages.services', compact('services','search'));
+        return view('pages.services', compact('services', 'search'));
     }
 
     public function veterinarians(Request $request)
     {
         $search = $request->input('search');
         $query = Veterinarian::query();
+
         if ($search) {
-            $query->where('first_name','like',"%{$search}%")
-                ->orWhere('last_name','like',"%{$search}%")
-                ->orWhere('specialty','like',"%{$search}%");
+            $query->where('first_name', 'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('specialty', 'like', "%{$search}%");
         }
+
         $veterinarians = $query->get();
-        return view('pages.veterinarians', compact('veterinarians','search'));
+        return view('pages.veterinarians', compact('veterinarians', 'search'));
     }
 }

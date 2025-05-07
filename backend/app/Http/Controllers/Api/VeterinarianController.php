@@ -26,7 +26,7 @@ class VeterinarianController extends Controller
             'first_name'  => 'required|string|max:100',
             'middle_name' => 'nullable|string|max:100',
             'last_name'   => 'required|string|max:100',
-            'specialty'   => 'nullable|string|max:100',
+            'specialization'   => 'nullable|string|max:100',
             'phone'       => 'nullable|string|max:20',
             'email'       => 'nullable|email|unique:veterinarians,email',
         ]);

@@ -3,28 +3,33 @@
 @section('title', 'Услуги')
 
 @section('content')
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Услуги</h2>
-        <button
-            id="addServiceBtn"
-            class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-            <i class="fa-solid fa-plus"></i>
-        </button>
-    </div>
+    <div class="layout-center">
+        <div class="layout-container">
 
-    <div class="overflow-x-auto">
-        <table
-            id="servicesTable"
-            class="min-w-full bg-white shadow rounded">
-            <thead class="bg-gray-100">
-            <tr>
-                <th class="px-4 py-2">Название</th>
-                <th class="px-4 py-2">Описание</th>
-                <th class="px-4 py-2">Цена</th>
-                <th class="px-4 py-2">Действия</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+            <h1 style="text-align: center; font-size: 1.5rem; font-weight: bold;">Услуги</h1>
+            <div class="centered-btn">
+                <button id="addServiceBtn" class="btn-primary">Добавить услугу</button>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table id="servicesTable" class="table-clean">
+                    <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Описание</th>
+                        <th>Цена</th>
+                        <th>Действия</th>
+                    </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+        </div>
     </div>
+@endsection
+
+@section('scripts')
+    <script src="{{ asset('js/services.js') }}"></script>
+    <script>initServices();</script>
 @endsection

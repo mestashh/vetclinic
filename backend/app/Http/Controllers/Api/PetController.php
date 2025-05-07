@@ -8,51 +8,22 @@ use Illuminate\Http\Request;
 
 class PetController extends Controller
 {
-    // 1) API: список питомцев в JSON
     public function index()
     {
-        return response()->json(Pet::all());
+        return response()->json(Pet::with('client')->get());
     }
 
-    // 2) Web: возвращает Blade-страницу питомцев
-    public function showPetsPage()
-    {
-        return view('pages.pets');
-    }
-
-    // 3) API: создание нового питомца
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'species' => 'required|string|max:50',
-            'breed' => 'nullable|string|max:50',
-            'birth_date' => 'nullable|date',
-            'client_id' => 'required|exists:clients,id'
-        ]);
-
-        $pet = Pet::create($validated);
-        return response()->json($pet, 201);
+        $pet = Pet::create($request->all());
+        return response()->json([
+            'data' => $pet->load('client')
+        ], 201);
     }
 
-    public function update(Request $request, Pet $pet)
-    {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'species' => 'required|string|max:50',
-            'breed' => 'nullable|string|max:50',
-            'birth_date' => 'nullable|date',
-            'client_id' => 'required|exists:clients,id'
-        ]);
-
-        $pet->update($validated);
-        return response()->json($pet);
-    }
-
-    // 5) API: удаление питомца
     public function destroy(Pet $pet)
     {
         $pet->delete();
-        return response()->json(['message' => 'Питомец удалён'], 200);
+        return response()->json(null, 204);
     }
 }

@@ -12,3 +12,61 @@ nav a:hover {
 nav a {
     text-decoration: none;
 }
+/* Центрирование основного контента */
+.layout-center {
+    display: flex;
+    justify-content: center;
+}
+
+.layout-container {
+    width: 100%;
+    max-width: 100%; /* было 900px */
+    overflow-x: auto;
+    padding-bottom: 1rem;
+}
+
+.table-clean {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1000px; /* добавлено: не даёт таблице схлопнуться */
+}
+
+
+.table-clean th,
+.table-clean td {
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+    text-align: left;
+}
+
+.table-clean tr:hover {
+    background-color: #f3f4f6;
+}
+.header-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.btn-primary {
+    background-color: #2563eb;
+    color: white;
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.btn-primary:hover {
+    background-color: #1d4ed8;
+}
+.centered-btn {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+}

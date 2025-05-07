@@ -84,8 +84,9 @@ export function initAppointments() {
 
         const petSelect = `
             <select class="pet-select w-full border-none"${isNew ? '' : ' disabled'}>
-                ${appt?.pet_id ? `<option value="${appt.pet_id}" selected>...</option>` : '<option value="">Выберите питомца</option>'}
+                ${appt?.pet_id ? `<option value="${appt.pet_id}" selected>${appt?.pet?.name || '...'}</option>` : '<option value="">Выберите питомца</option>'}
             </select>`;
+
 
         return `
         <tr ${idAttr} class="${isNew ? 'bg-gray-100' : 'bg-white hover:bg-gray-50'} border-b">
