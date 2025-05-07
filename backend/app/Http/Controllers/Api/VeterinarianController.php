@@ -10,7 +10,9 @@ class VeterinarianController extends Controller
 {
     public function index()
     {
-        return response()->json(Veterinarian::all());
+        return response()->json([
+            'data' => \App\Models\Veterinarian::all()
+        ]);
     }
 
     public function showVeterinariansPage()

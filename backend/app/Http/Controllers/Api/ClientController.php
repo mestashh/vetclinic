@@ -8,53 +8,54 @@ use Illuminate\Http\Request;
 
 class ClientController extends Controller
 {
-    // 1) API: список клиентов в JSON
     public function index()
     {
-        return response()->json(Client::all());
+        return response()->json([
+            'data' => Client::all()
+        ]);
     }
 
-    // 2) Web: возвращает Blade-страницу клиентов
-    public function showClientsPage()
-    {
-        return view('pages.clients');
-    }
-
-    // 3) API: создание нового клиента
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'first_name'  => 'required|string|max:100',
-            'middle_name' => 'nullable|string|max:100',
-            'last_name'   => 'required|string|max:100',
-            'phone'       => ['nullable', 'regex:/^\+?[0-9]{10,15}$/'], // <-- телефон: 10–15 цифр, + в начале опционально
-            'email'       => 'nullable|email',
-            'address'     => 'nullable|string|max:255',
-        ]);
+        $client = Client::create($request->all());
 
-        $client = Client::create($validated);
-        return response()->json($client, 201);
+        return response()->json([
+            'data' => $client
+        ], 201);
+    }
+
+    public function show(Client $client)
+    {
+        return response()->json([
+            'data' => $client
+        ]);
     }
 
     public function update(Request $request, Client $client)
     {
-        $validated = $request->validate([
-            'first_name'  => 'required|string|max:100',
-            'middle_name' => 'nullable|string|max:100',
-            'last_name'   => 'required|string|max:100',
-            'phone'       => ['nullable', 'regex:/^\+?[0-9]{10,15}$/'], // <-- то же правило
-            'email'       => "nullable|email|unique:clients,email,{$client->id}",
-            'address'     => 'nullable|string|max:255',
-        ]);
+        $client->update($request->all());
 
-        $client->update($validated);
-        return response()->json($client);
+        return response()->json([
+            'data' => $client
+        ]);
     }
 
-    // 5) API: удаление клиента
     public function destroy(Client $client)
     {
         $client->delete();
-        return response()->json(['message' => 'Клиент удалён'], 200);
+
+        return response()->json(null, 204);
+    }
+
+    /**
+     * Вернуть всех питомцев клиента по ID
+     */
+    public function pets($client_id)
+    {
+        $client = Client::findOrFail($client_id);
+
+        return response()->json([
+            'data' => $client->pets()->get()
+        ]);
     }
 }

@@ -1,32 +1,43 @@
-{{-- resources/views/pages/appointments.blade.php --}}
+<!-- vetclinic/backend/resources/views/appointments.blade.php -->
 @extends('layouts.app')
 
-@section('title', 'Приёмы')
-
 @section('content')
-    <div class="flex items-center justify-between mb-4">
-        <h2 class="text-xl font-semibold">Приёмы</h2>
-        <button id="addAppointmentBtn" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded">
-            <i class="fa-solid fa-plus"></i>
+    <div class="container mx-auto py-4">
+        <h1 class="text-2xl font-bold mb-4">Записи на приём</h1>
+
+        <button id="addAppointmentBtn" class="mb-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
+            Добавить запись
         </button>
+
+        <div class="overflow-x-auto bg-white shadow rounded-lg">
+            <table id="appointmentsTable" class="min-w-full text-sm text-left">
+                <thead class="bg-gray-200 text-gray-700">
+                <tr>
+                    <th class="px-4 py-2">Клиент</th>
+                    <th class="px-4 py-2">Питомец</th>
+                    <th class="px-4 py-2">Ветеринар</th>
+                    <th class="px-4 py-2">Дата и время</th>
+                    <th class="px-4 py-2">Примечание</th>
+                    <th class="px-4 py-2">Действия</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!-- Динамически заполняется через JS -->
+                </tbody>
+            </table>
+        </div>
     </div>
+@endsection
 
-    <div class="overflow-x-auto">
-        <table id="appointmentsTable" class="min-w-full bg-white shadow rounded">
-            <thead class="bg-gray-100">
-            <tr>
-                <th class="px-4 py-2">Клиент ID</th>
-                <th class="px-4 py-2">Питомец ID</th>
-                <th class="px-4 py-2">Ветеринар ID</th>
-                <th class="px-4 py-2">Дата/время</th>
-                <th class="px-4 py-2">Примечание</th>
-                <th class="px-4 py-2">Действия</th>
-            </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
-    </div>
-
-    @vite('src/pages/appointments.js')
-
+@section('scripts')
+    <script src="{{ asset('frontend/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (typeof initAppointments === 'function') {
+                initAppointments();
+            } else {
+                console.error('Функция initAppointments не найдена. Убедись, что она экспортируется в main.js');
+            }
+        });
+    </script>
 @endsection

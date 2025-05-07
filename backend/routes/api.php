@@ -13,7 +13,9 @@ use App\Http\Controllers\Api\VeterinarianController;
 
 
 // Клиенты — JSON
-Route::apiResource('clients', ClientController::class);
+Route::get('/clients/{client_id}/pets', [ClientController::class, 'pets']);
+Route::get('/clients', [ClientController::class, 'index']);
+Route::get('/veterinarians', [VeterinarianController::class, 'index']);
 
 // Питомцы, приёмы, услуги, ветеринары
 Route::apiResource('animals',      PetController::class);
