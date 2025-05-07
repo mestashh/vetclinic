@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.btn-add-vet {
+    background-color: white !important;
+    color: black !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    font-weight: bold !important;
+    padding: 8px 16px !important;
+    border-radius: 5px !important;
+}
+
+.btn-add-vet:active,
+.btn-add-vet:focus,
+.btn-add-vet:hover {
+    background-color: white !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+

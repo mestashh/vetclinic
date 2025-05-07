@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+nav a {
+    color: white;
+}
+
+nav a:hover {
+    color: #CBD5E0;
+}
+nav a {
+    text-decoration: none;
+}

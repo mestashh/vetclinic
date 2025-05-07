@@ -11,7 +11,13 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-    public function home()
+
+    public function showAppointmentsPage()
+    {
+        return view('pages.appointments');
+    }
+
+    public function index()
     {
         return view('home');
     }
@@ -20,6 +26,7 @@ class PageController extends Controller
     {
         $search = $request->input('search');
         $query = Client::query();
+
         if ($search) {
             $query->where(function($q) use($search) {
                 $q->where('first_name', 'like', "%{$search}%")
@@ -27,8 +34,10 @@ class PageController extends Controller
                     ->orWhere('last_name', 'like', "%{$search}%");
             });
         }
+
         $clients = $query->get();
-        return view('pages.clients', compact('clients','search'));
+
+        return view('pages.clients', compact('clients', 'search'));
     }
 
     public function pets(Request $request)

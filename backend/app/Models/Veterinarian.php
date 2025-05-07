@@ -10,12 +10,13 @@ class Veterinarian extends Model
     use HasFactory;
 
     protected $fillable = [
-        'full_name',
+        'first_name',
+        'last_name',
+        'middle_name',
         'specialization',
         'phone',
         'email',
     ];
-
 
     public function appointments()
     {

@@ -17,6 +17,8 @@ class Client extends Model
         'email',
         'address',
     ];
+
+    // Виртуальное свойство ФИО
     public function getFullNameAttribute(): string
     {
         return trim("{$this->last_name} {$this->first_name} {$this->middle_name}");
