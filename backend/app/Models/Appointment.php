@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Appointment extends Model
 {
     protected $fillable = [
-        'user_id',
+        'client_id',
         'pet_id',
         'veterinarian_id',
         'scheduled_at',

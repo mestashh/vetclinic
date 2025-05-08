@@ -11,6 +11,7 @@ use App\Http\Controllers\Api\VeterinarianController;
 
 
 
+Route::get('/users/{user}/pets', [UserController::class, 'pets']);
 
 
 

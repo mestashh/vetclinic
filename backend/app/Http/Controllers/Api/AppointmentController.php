@@ -5,38 +5,46 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class AppointmentController extends Controller
 {
     public function index(Request $request)
     {
-        $user = Auth::user();
-
-        if (!$user) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
-
-        switch ($user->role) {
-            case 'superadmin':
-            case 'admin':
-                $appointments = Appointment::with(['client', 'pet', 'veterinarian', 'services'])->get();
-                break;
-
-            case 'vet':
-                $appointments = Appointment::with(['client', 'pet', 'veterinarian', 'services'])
-                    ->where('veterinarian_id', $user->id)->get();
-                break;
-
-            case 'client':
-                $appointments = Appointment::with(['client', 'pet', 'veterinarian', 'services'])
-                    ->where('client_id', $user->id)->get();
-                break;
-
-            default:
-                return response()->json(['message' => 'Недостаточно прав'], 403);
-        }
+        $appointments = Appointment::with(['user', 'pet', 'veterinarian', 'services'])->get();
 
         return response()->json($appointments);
     }
+    public function store(Request $request)
+    {
+        $data = $request->validate([
+            'client_id' => 'required|exists:users,id',
+            'pet_id' => 'required|exists:pets,id',
+            'veterinarian_id' => 'required|exists:veterinarians,id',
+            'scheduled_at' => 'required|date',
+        ]);
+
+        $appointment = Appointment::create($data);
+
+        return response()->json($appointment, 201);
+    }
+    public function update(Request $request, Appointment $appointment)
+    {
+        $data = $request->validate([
+            'client_id' => 'required|exists:users,id',
+            'pet_id' => 'required|exists:pets,id',
+            'veterinarian_id' => 'required|exists:veterinarians,id',
+            'scheduled_at' => 'required|date',
+        ]);
+
+        $appointment->update($data);
+
+        return response()->json($appointment);
+    }
+    public function destroy(Appointment $appointment)
+    {
+        $appointment->delete();
+
+        return response()->json(['message' => 'Запись удалена успешно']);
+    }
+
 }

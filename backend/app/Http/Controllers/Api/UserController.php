@@ -15,11 +15,6 @@ class UserController extends Controller
         ]);
     }
 
-    public function showUsersPage()
-    {
-        return view('pages.users');
-    }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -58,4 +53,10 @@ class UserController extends Controller
         $user->delete();
         return response()->json(['message' => 'Клиент удалён'], 200);
     }
+    public function pets($userId)
+    {
+        $user = User::with('pets')->findOrFail($userId);
+        return response()->json(['data' => $user->pets]);
+    }
+
 }
