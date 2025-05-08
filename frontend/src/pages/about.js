@@ -12,7 +12,11 @@ export function initAbout() {
         axios.get('/api/animals')
             .then(({ data }) => {
                 const pets = data.data || [];
-                const html = pets.map(p => `
+
+                // Фильтрация питомцев по текущему клиенту
+                const myPets = pets.filter(p => p.client_id === window.currentUserId);
+
+                const html = myPets.map(p => `
                     <tr data-id="${p.id}">
                         <td><input disabled value="${p.name}" class="pet-input w-full border-none"></td>
                         <td><input disabled value="${p.species}" class="pet-input w-full border-none"></td>
@@ -31,6 +35,7 @@ export function initAbout() {
     }
 
     function attachPetEvents() {
+        // Удаление питомца
         table.querySelectorAll('.delete-pet-btn').forEach(btn => {
             btn.onclick = () => {
                 const id = btn.closest('tr').dataset.id;
@@ -40,6 +45,7 @@ export function initAbout() {
             };
         });
 
+        // Редактирование питомца
         table.querySelectorAll('.edit-pet-btn').forEach(btn => {
             btn.onclick = () => {
                 const row = btn.closest('tr');
@@ -50,12 +56,12 @@ export function initAbout() {
             };
         });
 
+        // Сохранение изменений питомца
         table.querySelectorAll('.update-pet-btn').forEach(btn => {
             btn.onclick = () => {
                 const row = btn.closest('tr');
                 const id = row.dataset.id;
-                const [name, species, breed, age] = Array.from(row.querySelectorAll('input'))
-                    .map(i => i.value);
+                const [name, species, breed, age] = Array.from(row.querySelectorAll('input')).map(i => i.value);
                 axios.put(`/api/animals/${id}`, { name, species, breed, age })
                     .then(() => loadPets())
                     .catch(() => showError("Ошибка при обновлении питомца"));
@@ -63,14 +69,16 @@ export function initAbout() {
         });
     }
 
+    // Добавление нового питомца
     if (addBtn) {
         addBtn.onclick = () => {
             const tr = document.createElement('tr');
+            tr.className = 'bg-gray-100 border-b';
             tr.innerHTML = `
-                <td><input placeholder="Кличка" class="new-pet-input w-full"/></td>
-                <td><input placeholder="Вид" class="new-pet-input w-full"/></td>
-                <td><input placeholder="Порода" class="new-pet-input w-full"/></td>
-                <td><input placeholder="Возраст" class="new-pet-input w-full" type="number" min="0"/></td>
+                <td><input placeholder="Кличка" class="new-pet-input w-full" /></td>
+                <td><input placeholder="Вид" class="new-pet-input w-full" /></td>
+                <td><input placeholder="Порода" class="new-pet-input w-full" /></td>
+                <td><input placeholder="Возраст" class="new-pet-input w-full" type="number" min="0" /></td>
                 <td class="space-x-1">
                     <button class="save-pet-btn btn-green px-2 py-1 rounded">Сохранить</button>
                     <button class="cancel-pet-btn btn-gray px-2 py-1 rounded">Отмена</button>
@@ -78,6 +86,7 @@ export function initAbout() {
             `;
             table.querySelector('tbody').prepend(tr);
 
+            // Сохранение нового питомца
             tr.querySelector('.save-pet-btn').onclick = () => {
                 const [name, species, breed, age] = Array.from(tr.querySelectorAll('.new-pet-input')).map(i => i.value);
                 axios.post('/api/animals', { name, species, breed, age, client_id: window.currentUserId })
@@ -85,9 +94,11 @@ export function initAbout() {
                     .catch(() => showError("Ошибка при создании питомца"));
             };
 
+            // Отмена добавления питомца
             tr.querySelector('.cancel-pet-btn').onclick = () => tr.remove();
         };
     }
 
+    // Изначальная загрузка питомцев
     loadPets();
 }
