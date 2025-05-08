@@ -5,8 +5,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Вход</title>
-    <link href="{{ asset('css/app.css') }}" rel="stylesheet">
-    <script src="{{ asset('js/app.js') }}" defer></script>
+    <link href="{{ asset('src/app.css') }}" rel="stylesheet">
+    <script src="{{ asset('src/app.js') }}" defer></script>
 </head>
 <body class="bg-gray-100">
 

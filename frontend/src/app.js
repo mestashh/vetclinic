@@ -1,15 +1,27 @@
 import './bootstrap';
+
 document.addEventListener('DOMContentLoaded', () => {
     const p = window.location.pathname;
+    window.currentUserRole = window.currentUserRole || '';
+    if (p.startsWith('/users')) {
+        import('./pages/users').then(m => m.initUsers());
+    }
+
     if (p.startsWith('/clients')) {
-        import('./pages/clients').then(m => m.initClients());         // CHANGED
+        import('./pages/users.js').then(m => m.initClients());
     } else if (p.startsWith('/appointments')) {
-        import('./pages/appointments').then(m => m.initAppointments()); // CHANGED
+        import('./pages/appointments').then(m => m.initAppointments());
     } else if (p.startsWith('/pets')) {
-        import('./pages/pets').then(m => m.initPets());               // CHANGED
+        import('./pages/pets').then(m => m.initPets());
     } else if (p.startsWith('/services')) {
-        import('./pages/services').then(m => m.initServices());       // CHANGED
+        import('./pages/services').then(m => m.initServices());
     } else if (p.startsWith('/veterinarians')) {
-        import('./pages/veterinarians').then(m => m.initVets());      // CHANGED
+        import('./pages/veterinarians').then(m => m.initVets());
+    } else if (p.startsWith('/about')) {
+        import('./pages/about').then(m => m.initAbout());
+    } else if (p.startsWith('/my-appointments')) {
+        import('./pages/myAppointments').then(m => m.initMyAppointments());
+    }else if (p.startsWith('/news')) {
+        import('./pages/news').then(m => m.initNews());
     }
 });

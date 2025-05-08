@@ -12,7 +12,6 @@ export function initPets() {
         try {
             const res = await axios.get('/api/clients');
             clients = res.data.data || [];
-            console.log('Загруженные клиенты:', clients);
         } catch (e) {
             showError("Не удалось загрузить клиентов");
         }
@@ -21,19 +20,23 @@ export function initPets() {
     function loadPets() {
         axios.get('/api/animals')
             .then(({ data }) => {
-                const html = data.map(p => `
+                const html = data.map(p => {
+                    const clientName = p.client
+                        ? [p.client.last_name, p.client.first_name, p.client.middle_name].filter(Boolean).join(' ')
+                        : '';
+                    return `
                     <tr data-id="${p.id}" class="bg-white border-b hover:bg-gray-50">
                         <td class="px-4 py-2"><input disabled value="${p.name}" class="pet-input w-full border-none"></td>
                         <td class="px-4 py-2"><input disabled value="${p.species}" class="pet-input w-full border-none"></td>
                         <td class="px-4 py-2"><input disabled value="${p.breed || ''}" class="pet-input w-full border-none"></td>
                         <td class="px-4 py-2"><input disabled value="${p.age || ''}" class="pet-input w-full border-none"></td>
-                        <td class="px-4 py-2">
-                            <input disabled value="${p.client ? [p.client.last_name, p.client.first_name, p.client.middle_name].filter(Boolean).join(' ') : ''}" class="pet-input w-full border-none">
-                        </td>
+                        <td class="px-4 py-2"><input disabled value="${clientName}" class="pet-input w-full border-none"></td>
                         <td class="px-4 py-2 space-x-1">
+                            <button class="edit-btn bg-blue-500 text-white px-2 rounded">Редактировать</button>
                             <button class="delete-btn bg-red-500 text-white px-2 rounded">Удалить</button>
                         </td>
-                    </tr>`).join('');
+                    </tr>`;
+                }).join('');
                 table.querySelector('tbody').innerHTML = html;
                 attachEvents();
             })
@@ -47,6 +50,28 @@ export function initPets() {
                 axios.delete(`/api/animals/${id}`)
                     .then(() => loadPets())
                     .catch(() => showError("Ошибка при удалении"));
+            };
+        });
+
+        table.querySelectorAll('.edit-btn').forEach(btn => {
+            btn.onclick = () => {
+                const row = btn.closest('tr');
+                row.querySelectorAll('input').forEach(i => i.disabled = false);
+                btn.textContent = 'Сохранить';
+                btn.classList.replace('edit-btn', 'update-btn');
+                attachEvents();
+            };
+        });
+
+        table.querySelectorAll('.update-btn').forEach(btn => {
+            btn.onclick = () => {
+                const row = btn.closest('tr');
+                const id = row.dataset.id;
+                const [name, species, breed, age] = Array.from(row.querySelectorAll('input')).map(i => i.value);
+
+                axios.put(`/api/animals/${id}`, { name, species, breed, age })
+                    .then(() => loadPets())
+                    .catch(() => showError("Ошибка при обновлении"));
             };
         });
     }
@@ -65,7 +90,7 @@ export function initPets() {
             <td class="px-4 py-2"><input placeholder="Порода" class="new-input w-full" /></td>
             <td class="px-4 py-2"><input type="number" placeholder="Возраст" class="new-input w-full" /></td>
             <td class="px-4 py-2">
-                <select class="new-input w-full">
+                <select class="new-input w-full" disabled>
                     <option value="">Выберите владельца</option>
                     ${clientOptions}
                 </select>

@@ -5,11 +5,15 @@
 @section('content')
     <div class="layout-center">
         <div class="layout-container">
-
             <h1 style="text-align: center; font-size: 1.5rem; font-weight: bold;">Услуги</h1>
-            <div class="centered-btn">
-                <button id="addServiceBtn" class="btn-primary">Добавить услугу</button>
-            </div>
+
+            @auth
+                @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
+                    <div class="centered-btn">
+                        <button id="addServiceBtn" class="btn-primary">Добавить услугу</button>
+                    </div>
+                @endif
+            @endauth
 
             <div class="overflow-x-auto">
                 <table id="servicesTable" class="table-clean">
@@ -24,12 +28,15 @@
                     <tbody></tbody>
                 </table>
             </div>
-
         </div>
     </div>
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/services.js') }}"></script>
-    <script>initServices();</script>
+    <script>
+        window.currentUserRole = "{{ Auth::check() ? Auth::user()->role : '' }}";
+    </script>
+    @vite(['src/app.js'])
 @endsection
+
+

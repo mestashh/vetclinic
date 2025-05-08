@@ -1,22 +1,22 @@
-export function initVets() {
-    const table = document.getElementById('vetsTable');
-    const addBtn = document.getElementById('addVetBtn');
+export function initUsers() {
+    const table = document.getElementById('usersTable');
+    const addBtn = document.getElementById('addUserBtn');
 
     function showError(msg) {
         alert(msg);
     }
 
-    function loadVets() {
-        axios.get('/api/veterinarians')
+    // 2) функция загрузки и рендеринга
+    function loadUsers() {
+        axios.get('/api/users')
             .then(({ data }) => {
-                const html = (data.data || []).map(v => `
-                    <tr data-id="${v.id}" class="bg-white border-b hover:bg-gray-50">
-                        <td class="px-4 py-2"><input disabled value="${v.last_name}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.first_name}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.middle_name || ''}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.specialization || ''}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.phone || ''}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.email || ''}" class="vet-input w-full border-none"></td>
+                const html = (data.data || []).map(u => `
+                        <td class="px-4 py-2"><input disabled value="${u.last_name || ''}" class="w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${u.first_name || ''}" class="w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${u.middle_name || ''}" class="w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${u.phone || ''}" class="w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${u.email || ''}" class="w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${u.address || ''}" class="w-full border-none"></td>
                         <td class="px-4 py-2 space-x-1">
                             <button class="edit-btn bg-blue-500 text-white px-2 rounded">Редактировать</button>
                             <button class="delete-btn bg-red-500 text-white px-2 rounded">Удалить</button>
@@ -25,19 +25,18 @@ export function initVets() {
                 table.querySelector('tbody').innerHTML = html;
                 attachEvents();
             })
-            .catch(() => showError("Не удалось загрузить ветеринаров"));
+            .catch(() => showError("Не удалось загрузить клиентов"));
     }
 
     function attachEvents() {
         table.querySelectorAll('.delete-btn').forEach(btn => {
             btn.onclick = () => {
                 const id = btn.closest('tr').dataset.id;
-                axios.delete(`/api/veterinarians/${id}`)
-                    .then(() => loadVets())
-                    .catch(() => showError("Ошибка при удалении"));
+                axios.delete(`/api/users/${id}`)
+                    .then(loadUsers)
+                    .catch(() => showError('Ошибка при удалении'));
             };
         });
-
         table.querySelectorAll('.edit-btn').forEach(btn => {
             btn.onclick = () => {
                 const row = btn.closest('tr');
@@ -47,17 +46,15 @@ export function initVets() {
                 attachEvents();
             };
         });
-
         table.querySelectorAll('.update-btn').forEach(btn => {
             btn.onclick = () => {
                 const row = btn.closest('tr');
                 const id = row.dataset.id;
-                const [last_name, first_name, middle_name, specialization, phone, email] =
+                const [last_name, first_name, middle_name, phone, email, address] =
                     Array.from(row.querySelectorAll('input')).map(i => i.value);
-                axios.put(`/api/veterinarians/${id}`, {
-                    last_name, first_name, middle_name, specialization, phone, email
-                }).then(() => loadVets())
-                    .catch(() => showError("Ошибка при обновлении"));
+                axios.put(`/api/users/${id}`, { last_name, first_name, middle_name, phone, email, address })
+                    .then(loadUsers)
+                    .catch(() => showError('Ошибка при обновлении'));
             };
         });
     }
@@ -70,29 +67,28 @@ export function initVets() {
                 <td class="px-4 py-2"><input placeholder="Фамилия" class="new-input w-full" /></td>
                 <td class="px-4 py-2"><input placeholder="Имя" class="new-input w-full" /></td>
                 <td class="px-4 py-2"><input placeholder="Отчество" class="new-input w-full" /></td>
-                <td class="px-4 py-2"><input placeholder="Специализация" class="new-input w-full" /></td>
                 <td class="px-4 py-2"><input placeholder="Телефон" class="new-input w-full" /></td>
                 <td class="px-4 py-2"><input placeholder="Email" class="new-input w-full" /></td>
+                <td class="px-4 py-2"><input placeholder="Адрес" class="new-input w-full" /></td>
                 <td class="px-4 py-2 space-x-1">
                     <button class="save-btn bg-green-500 text-white px-2 rounded">Сохранить</button>
                     <button class="cancel-btn bg-gray-500 text-white px-2 rounded">Отмена</button>
                 </td>`;
             table.prepend(tr);
             tr.querySelector('.save-btn').onclick = () => {
-                const [last_name, first_name, middle_name, specialization, phone, email] =
+                const [last_name, first_name, middle_name, phone, email, address] =
                     Array.from(tr.querySelectorAll('.new-input')).map(i => i.value);
-                axios.post('/api/veterinarians', {
+                axios.post('/api/users', {
                     last_name,
                     first_name,
                     middle_name,
-                    specialization,
-                    phone,
-                    email
-                }).then(() => loadVets())
-                    .catch(() => showError("Ошибка при создании"));
+                    phone, email,
+                    address
+                }).then(() => loadUsers())
+                    .catch(() => showError('Ошибка при создании'));
             };
             tr.querySelector('.cancel-btn').onclick = () => tr.remove();
         };
     }
-    loadVets();
+    loadUsers();
 }

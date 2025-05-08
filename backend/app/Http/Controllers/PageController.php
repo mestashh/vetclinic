@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Client;
+use App\Models\User;
 use App\Models\Pet;
 use App\Models\Appointment;
 use App\Models\Service;
@@ -11,15 +11,38 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
+
+
+
+    public function aboutMe()
+    {
+        $user = auth()->user();
+
+        $pets = Pet::where('client_id', $user->id)->get(); // <-- ИСПРАВЛЕНО!
+
+        return view('pages.about', [
+            'user' => $user,
+            'pets' => $pets,
+        ]);
+    }
+
+    /**
+     * Страница «Мои записи» для клиента.
+     */
+    public function myAppointments()
+    {
+        return view('pages.my-appointments');
+    }
+
     public function index()
     {
         return view('home');
     }
 
-    public function clients(Request $request)
+    public function users(Request $request)
     {
         $search = $request->input('search');
-        $query = Client::query();
+        $query = User::query();
 
         if ($search) {
             $query->where(function ($q) use ($search) {
@@ -29,14 +52,14 @@ class PageController extends Controller
             });
         }
 
-        $clients = $query->get();
-        return view('pages.clients', compact('clients', 'search'));
+        $users = $query->get();
+        return view('pages.users', compact('users', 'search'));
     }
 
     public function pets(Request $request)
     {
         $search = $request->input('search');
-        $query = Pet::with('client');
+        $query = Pet::with('user');
 
         if ($search) {
             $query->where('name', 'like', "%{$search}%");
@@ -49,7 +72,7 @@ class PageController extends Controller
     public function appointments(Request $request)
     {
         $date = $request->input('date');
-        $query = Appointment::with(['client', 'pet', 'veterinarian', 'services']);
+        $query = Appointment::with(['user', 'pet', 'veterinarian', 'services']);
 
         if ($date) {
             $query->whereDate('scheduled_at', $date);
@@ -59,18 +82,11 @@ class PageController extends Controller
         return view('pages.appointments', compact('appointments', 'date'));
     }
 
-    public function services(Request $request)
+    public function services()
     {
-        $search = $request->input('search');
-        $query = Service::query();
-
-        if ($search) {
-            $query->where('name', 'like', "%{$search}%");
-        }
-
-        $services = $query->get();
-        return view('pages.services', compact('services', 'search'));
+        return view('pages.services');
     }
+
 
     public function veterinarians(Request $request)
     {
@@ -86,4 +102,46 @@ class PageController extends Controller
         $veterinarians = $query->get();
         return view('pages.veterinarians', compact('veterinarians', 'search'));
     }
+    public function news()
+    {
+        return view('pages.news');
+    }
+    public function storePet(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'species' => 'required|string|max:255',
+            'breed' => 'nullable|string|max:255',
+            'age' => 'nullable|integer|min:0|max:100',
+        ]);
+
+        $user = auth()->user();
+
+        Pet::create([
+            'name' => $request->name,
+            'species' => $request->species,
+            'breed' => $request->breed,
+            'age' => $request->age,
+            'client_id' => $user->id,
+        ]);
+
+        return redirect()->route('about')->with('success', 'Питомец добавлен!');
+    }
+    public function updateProfileUser(Request $request)
+    {
+        $validated = $request->validate([
+            'first_name'  => 'required|string|max:255',
+            'last_name'   => 'required|string|max:255',
+            'middle_name' => 'nullable|string|max:255',
+            'email'       => 'required|email|unique:users,email,' . auth()->id(),
+            'phone'       => 'nullable|string|max:255',
+            'address'     => 'nullable|string|max:255',
+        ]);
+
+        auth()->user()->update($validated);
+
+        // возвращаем простой JSON 200 OK
+        return response()->json(['message' => 'Данные обновлены']);
+    }
+
 }

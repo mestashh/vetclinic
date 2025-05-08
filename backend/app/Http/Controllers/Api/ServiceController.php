@@ -8,19 +8,18 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    // 1) API: список услуг в JSON
     public function index()
     {
-        return response()->json(Service::all());
+        return response()->json([
+            'data' => Service::all()
+        ]);
     }
 
-    // 2) Web: возвращает Blade-страницу услуг
     public function showServicesPage()
     {
         return view('pages.services');
     }
 
-    // 3) API: создание новой услуги
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -33,23 +32,33 @@ class ServiceController extends Controller
         return response()->json($service, 201);
     }
 
-    // 4) API: обновление услуги
-    public function update(Request $request, Service $service)
+    public function show($id)
     {
-        $validated = $request->validate([
-            'name'        => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'price'       => 'required|numeric',
-        ]);
-
-        $service->update($validated);
+        $service = Service::findOrFail($id);
         return response()->json($service);
     }
 
-    // 5) API: удаление услуги
-    public function destroy(Service $service)
+    public function update(Request $request, $id)
     {
-        $service->delete();
-        return response()->json(['message' => 'Услуга удалена'], 200);
+        $service = Service::findOrFail($id);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'price' => 'required|numeric'
+        ]);
+
+        $service->update($validated);
+
+        return response()->json($service);
     }
+
+    public function destroy($id)
+    {
+        $service = Service::findOrFail($id);
+        $service->delete();
+
+        return response()->noContent();
+    }
+
 }

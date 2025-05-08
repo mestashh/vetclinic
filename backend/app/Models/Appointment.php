@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 class Appointment extends Model
 {
     protected $fillable = [
-        'client_id',
+        'user_id',
         'pet_id',
         'veterinarian_id',
         'scheduled_at',
@@ -17,9 +17,9 @@ class Appointment extends Model
     ];
 
     // Связь «один ко многим» с клиентом
-    public function client(): BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(Client::class);
+        return $this->belongsTo(User::class);
     }
 
     // Связь «один ко многим» с питомцем

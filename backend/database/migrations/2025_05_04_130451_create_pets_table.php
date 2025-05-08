@@ -15,7 +15,7 @@ class CreatePetsTable extends Migration
             $table->string('breed')->nullable();
             $table->unsignedTinyInteger('age')->nullable();
             $table->foreignId('client_id')
-                ->constrained('clients')
+                ->constrained('users')
                 ->onDelete('cascade');
             $table->timestamps();
         });
