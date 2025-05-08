@@ -16,13 +16,20 @@ export function initMyAppointments() {
 
     // Загрузить справочники пользователей и ветеринаров
     async function loadRefs() {
-        const [u, v] = await Promise.all([
+        const [u, vRes] = await Promise.all([
             axios.get('/api/users'),
             axios.get('/api/veterinarians'),
         ]);
-        users         = u.data.data || [];
-        veterinarians = v.data.data || [];
+        users = u.data.data || [];
+        // берём из каждого v.user нужные поля
+        veterinarians = (vRes.data.data || []).map(v => ({
+            id:      v.id,
+            first_name:  v.user.first_name,
+            middle_name: v.user.middle_name,
+            last_name:   v.user.last_name,
+        }));
     }
+
 
     // Нахождение первого свободного слота после текущего момента
     function getNextSlot() {

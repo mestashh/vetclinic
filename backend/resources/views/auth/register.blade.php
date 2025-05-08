@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('title', 'Регистрация')
-
+@vite(['src/app.js'])
 @section('content')
     <div class="max-w-md mx-auto mt-10 bg-white p-6 rounded-lg shadow-md">
         <h2 class="text-xl font-bold mb-4">Создание аккаунта</h2>
@@ -39,3 +39,4 @@
         </form>
     </div>
 @endsection
+

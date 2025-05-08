@@ -9,13 +9,13 @@ return new class extends Migration {
     {
         Schema::create('veterinarians', function (Blueprint $table) {
             $table->id();
-            $table->string('first_name', 100);
-            $table->string('last_name', 100);
-            $table->string('middle_name', 100)->nullable();
+            $table->unsignedBigInteger('user_id')->unique();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnDelete();
             $table->string('specialization')->nullable();
             $table->string('phone', 20)->nullable();
             $table->string('email')->unique()->nullable();
             $table->timestamps();
+
         });
     }
 

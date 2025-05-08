@@ -1,67 +1,44 @@
 export function initServices() {
-    console.log('[services.js] initServices загружен');
-
     const table = document.getElementById('servicesTable');
     const addBtn = document.getElementById('addServiceBtn');
 
+    const isAdmin = window.currentUserRole === 'admin' || window.currentUserRole === 'superadmin';
+
     if (!table) {
-        console.error('[services.js] servicesTable не найден в DOM!');
+        console.error('[services.js] Таблица не найдена!');
         return;
     }
-
-    const isAdmin = window.currentUserRole === 'admin' || window.currentUserRole === 'superadmin';
 
     function showError(msg) {
         alert(msg);
     }
 
     function loadServices() {
-        console.log('[services.js] загружаем список услуг...');
         axios.get('/api/procedures')
             .then(response => {
-                let services;
-                if (Array.isArray(response.data)) {
-                    services = response.data;
-                } else if (Array.isArray(response.data.data)) {
-                    services = response.data.data;
-                } else {
-                    services = [];
-                }
+                const services = Array.isArray(response.data)
+                    ? response.data
+                    : response.data.data || [];
 
                 const html = services.map(s => {
-                    let actionButtons = '';
-
-                    if (isAdmin) {
-                        actionButtons = `
-                            <button class="edit-btn bg-blue-500 text-white px-2 rounded">Редактировать</button>
-                            <button class="delete-btn bg-red-500 text-white px-2 rounded">Удалить</button>
-                        `;
-                    }
+                    const actions = isAdmin
+                        ? `<button class="edit-btn bg-blue-500 text-white px-2 rounded">Редактировать</button>
+                           <button class="delete-btn bg-red-500 text-white px-2 rounded">Удалить</button>`
+                        : '';
 
                     return `
                     <tr data-id="${s.id}" class="bg-white border-b hover:bg-gray-50">
-                        <td class="px-4 py-2">
-                          <input disabled value="${s.name}" class="service-input w-full border-none">
-                        </td>
-                        <td class="px-4 py-2">
-                          <input disabled value="${s.description || ''}" class="service-input w-full border-none">
-                        </td>
-                        <td class="px-4 py-2">
-                          <input disabled value="${s.price}" class="service-input w-full border-none">
-                        </td>
-                        <td class="px-4 py-2 space-x-1">
-                            ${actionButtons}
-                        </td>
+                        <td class="px-4 py-2"><input disabled value="${s.name}" class="service-input w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${s.description || ''}" class="service-input w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${s.price}" class="service-input w-full border-none"></td>
+                        ${isAdmin ? `<td class="px-4 py-2 space-x-1">${actions}</td>` : ''}
                     </tr>`;
                 }).join('');
 
                 table.querySelector('tbody').innerHTML = html;
-                attachEvents();
+                if (isAdmin) attachEvents();
             })
-            .catch(err => {
-                console.error('[services.js] ошибка загрузки услуг:', err);
-                showError("Не удалось загрузить услуги");
-            });
+            .catch(() => showError('Ошибка загрузки услуг'));
     }
 
     function attachEvents() {
@@ -70,7 +47,7 @@ export function initServices() {
                 const id = btn.closest('tr').dataset.id;
                 axios.delete(`/api/procedures/${id}`)
                     .then(loadServices)
-                    .catch(() => showError("Ошибка при удалении"));
+                    .catch(() => showError('Ошибка при удалении'));
             };
         });
 
@@ -96,7 +73,7 @@ export function initServices() {
                     price: parseFloat(price)
                 })
                     .then(loadServices)
-                    .catch(() => showError("Ошибка при обновлении"));
+                    .catch(() => showError('Ошибка при обновлении'));
             };
         });
     }
@@ -123,11 +100,10 @@ export function initServices() {
                     price: parseFloat(price)
                 })
                     .then(loadServices)
-                    .catch(() => showError("Ошибка при создании"));
+                    .catch(() => showError('Ошибка при создании'));
             };
 
             tr.querySelector('.cancel-btn').onclick = () => tr.remove();
-
             table.querySelector('tbody').prepend(tr);
         };
     }

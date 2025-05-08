@@ -10,15 +10,37 @@ class VeterinarianController extends Controller
 {
     public function index()
     {
+        $vets = \App\Models\Veterinarian::with('user')->get()->map(function ($v) {
+            return [
+                'id'           => $v->id,
+                'user'         => [
+                    'first_name'  => $v->user?->first_name,
+                    'middle_name' => $v->user?->middle_name,
+                    'last_name'   => $v->user?->last_name,
+                    'user_id' => $v->user_id,
+                ]
+            ];
+        });
+
+        return response()->json(['data' => $vets]);
+    }
+
+    public function byUser($userId)
+    {
+        $vet = \App\Models\Veterinarian::where('user_id', $userId)->first();
+
+        if (!$vet) {
+            return response()->json(['message' => 'Ветеринар не найден'], 404);
+        }
+
         return response()->json([
-            'data' => \App\Models\Veterinarian::all()
+            'id'        => $vet->id,
+            'user_id'   => $vet->user_id,
+            'full_name' => optional($vet->user)->last_name . ' ' . optional($vet->user)->first_name,
         ]);
     }
 
-    public function showVeterinariansPage()
-    {
-        return view('pages.veterinarians');
-    }
+
 
     public function store(Request $request)
     {

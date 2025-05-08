@@ -10,13 +10,14 @@ use App\Http\Controllers\Api\VeterinarianController;
 
 
 
+Route::get('/veterinarians/by-user/{user}', [VeterinarianController::class, 'byUser']);
+
+
+
+
+
 
 Route::get('/users/{user}/pets', [UserController::class, 'pets']);
-
-
-
-
-
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/veterinarians', [VeterinarianController::class, 'index']);
 Route::apiResource('users', UserController::class);

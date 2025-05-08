@@ -22,7 +22,9 @@
                         <th>Название</th>
                         <th>Описание</th>
                         <th>Цена</th>
-                        <th>Действия</th>
+                        @if (in_array(Auth::user()->role, ['admin', 'superadmin']))
+                            <th>Действия</th>
+                        @endif
                     </tr>
                     </thead>
                     <tbody></tbody>
@@ -38,5 +40,3 @@
     </script>
     @vite(['src/app.js'])
 @endsection
-
-

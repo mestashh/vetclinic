@@ -14,9 +14,9 @@
                         <li><a href="{{ route('services') }}"    class="text-white hover:text-gray-300">Услуги</a></li>
                 @endif
                 @if(Auth::user()->role == 'admin')
-                    <li><a href="{{ route('appointments') }}" class="text-white hover:text-gray-300">Приёмы</a></li>
-                    <li><a href="{{ route('pets') }}"        class="text-white hover:text-gray-300">Питомцы</a></li>
-                    <li><a href="{{ route('users') }}"        class="text-white hover:text-gray-300">Клиенты</a></li>
+                        <li><a href="{{ route('users') }}"        class="text-white hover:text-gray-300">Клиенты</a></li>
+                        <li><a href="{{ route('appointments') }}" class="text-white hover:text-gray-300">Приёмы</a></li>
+                        <li><a href="{{ route('pets') }}"        class="text-white hover:text-gray-300">Питомцы</a></li>
                 @endif
                     @if(Auth::user()->role == 'superadmin')
                         <li><a href="{{ url('/') }}"        class="text-white hover:text-gray-300">Главная</a></li>
