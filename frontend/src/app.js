@@ -24,7 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
         import('./pages/changeRoles').then(m => m.initChange());
     } else if (p.startsWith('/appointments/start')) {
         import('./pages/start-appointment.js').then(m => m.initStartAppointment());
-    }else if (p.startsWith('/appointments')) {
+    } else if (p.startsWith('/appointments')) {
         import('./pages/appointments').then(m => m.initAppointments());
+    } else if (p.startsWith('/my-past-appointments')) {
+        import('./pages/pastAppointments.js').then(m => m.initPastAppointments());
     }
 });

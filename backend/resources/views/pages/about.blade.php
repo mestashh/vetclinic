@@ -157,10 +157,6 @@
         <div class="profile-section">
         <h1>Обо мне</h1>
 
-        @if(session('success'))
-            <div class="success-message">{{ session('success') }}</div>
-        @endif
-
         <form id="userForm">
             @csrf
             <table class="profile-table">

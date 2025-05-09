@@ -10,16 +10,15 @@ use App\Http\Controllers\PageController;
 
 
 
+Route::get('/my-past-appointments', [PageController::class, 'pastAppointments'])->name('my-past-appointments');
+
+
+
+
+
 
 Route::get('/appointments/start/{appointment}', [PageController::class, 'startAppointment'])->name('appointments.start');
 Route::get('/appointments/start', [PageController::class, 'selectAppointment'])->name('appointments.select');
-
-
-
-
-
-
-
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');

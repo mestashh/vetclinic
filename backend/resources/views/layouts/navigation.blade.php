@@ -11,7 +11,8 @@
             @auth
                 @if(Auth::user()->role == 'client')
                     <li><a href="{{ route('about') }}"            class="text-white hover:text-gray-300">Обо мне</a></li>
-                    <li><a href="{{ route('my-appointments') }}"  class="text-white hover:text-gray-300">Мои записи</a></li>
+                    <li><a href="{{ route('my-appointments') }}"  class="text-white hover:text-gray-300">Записаться на прием</a></li>
+                        <li><a href="{{ route('my-past-appointments') }}" class="text-white hover:text-gray-300">История приёмов</a></li>
                     <li><a href="{{ route('news') }}"             class="text-white hover:text-gray-300">Новости клиники</a></li>
                 @endif
 
@@ -40,11 +41,9 @@
             @endauth
         </ul>
 
-        {{-- Правый блок: имя + выход --}}
         <div style="display:flex; align-items:center; gap:1rem;">
             @auth
-                <span>{{ Auth::user()->name }}</span>
-
+                <span>{{ Auth::user()->first_name }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button type="submit"

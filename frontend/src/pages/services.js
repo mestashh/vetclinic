@@ -4,7 +4,7 @@ export function initServices() {
     const table = document.getElementById('servicesTable');
     const addBtn = document.getElementById('addServiceBtn');
     const searchInput = document.getElementById('searchInput');
-    const isAdmin = window.currentUserRole === 'admin' || window.currentUserRole === 'superadmin';
+    const isSuperAdmin = window.currentUserRole === 'superadmin';
     let services = [];
 
     function showError(msg) {
@@ -23,7 +23,7 @@ export function initServices() {
                     <span class="service-name">${service.name}</span>
                 </td>
                 <td class="service-desc">${service.description || ''}</td>
-                ${isAdmin ? `
+                ${isSuperAdmin ? `
                 <td class="action-buttons">
                     <button class="add-variant-btn btn-icon confirm-btn">➕ Вариант</button>
                     <button class="edit-btn btn-icon edit-btn">✏️</button>
@@ -33,11 +33,11 @@ export function initServices() {
         `).join('');
 
         table.querySelector('tbody').innerHTML = html;
-        if (isAdmin) attachEvents();
-        setupToggleEvents();
+        if (isSuperAdmin) attachEvents();
+        setupToggleEvents(isSuperAdmin);
     }
 
-    function setupToggleEvents() {
+    function setupToggleEvents(isSuperAdmin) {
         table.querySelectorAll('.toggle-items').forEach(btn => {
             btn.onclick = () => {
                 const row = btn.closest('tr');
@@ -63,67 +63,69 @@ export function initServices() {
                                     <strong>${item.name}</strong> — ${item.price}₽ (${item.quantity} шт.)
                                     ${item.description ? `&nbsp;— ${item.description}` : ''}
                                 </span>
+                                ${isSuperAdmin ? `
                                 <span class="variant-buttons" style="margin-left: 1rem;">
                                     <button class="edit-variant btn-icon edit-btn">✏️</button>
                                     <button class="delete-variant btn-icon cancel-btn">🗑️</button>
-                                </span>
+                                </span>` : ''}
                             </li>
                         `).join('') || '<em>Нет вариантов</em>'}
                     </ul>
                 </td>
-            `;
+                `;
                 row.after(variantRow);
 
-                variantRow.querySelectorAll('.edit-variant').forEach(editBtn => {
-                    editBtn.onclick = () => {
-                        const li = editBtn.closest('li');
-                        const id = li.dataset.itemId;
-                        const span = li.querySelector('.item-content');
+                if (isSuperAdmin) {
+                    variantRow.querySelectorAll('.edit-variant').forEach(editBtn => {
+                        editBtn.onclick = () => {
+                            const li = editBtn.closest('li');
+                            const id = li.dataset.itemId;
+                            const span = li.querySelector('.item-content');
 
-                        const item = services.flatMap(s => s.items || []).find(i => i.id == id);
-                        if (!item) return;
+                            const item = services.flatMap(s => s.items || []).find(i => i.id == id);
+                            if (!item) return;
 
-                        span.innerHTML = `
-                        <input type="text" value="${item.name}" class="v-name" style="width:120px;" />
-                        <input type="number" value="${item.price}" class="v-price" style="width:80px;" />
-                        <input type="number" value="${item.quantity}" class="v-qty" style="width:80px;" />
-                        <input type="text" value="${item.description || ''}" class="v-desc" style="width:200px;" />
-                        <button class="btn-icon confirm-btn save-v">✅</button>
-                        <button class="btn-icon cancel-btn cancel-v">❌</button>
-                    `;
+                            span.innerHTML = `
+                                <input type="text" value="${item.name}" class="v-name" style="width:120px;" />
+                                <input type="number" value="${item.price}" class="v-price" style="width:80px;" />
+                                <input type="number" value="${item.quantity}" class="v-qty" style="width:80px;" />
+                                <input type="text" value="${item.description || ''}" class="v-desc" style="width:200px;" />
+                                <button class="btn-icon confirm-btn save-v">✅</button>
+                                <button class="btn-icon cancel-btn cancel-v">❌</button>
+                            `;
 
-                        span.querySelector('.cancel-v').onclick = () => loadServices();
+                            span.querySelector('.cancel-v').onclick = () => loadServices();
 
-                        span.querySelector('.save-v').onclick = () => {
-                            const name = span.querySelector('.v-name').value.trim();
-                            const price = parseFloat(span.querySelector('.v-price').value);
-                            const quantity = parseInt(span.querySelector('.v-qty').value);
-                            const description = span.querySelector('.v-desc').value.trim();
+                            span.querySelector('.save-v').onclick = () => {
+                                const name = span.querySelector('.v-name').value.trim();
+                                const price = parseFloat(span.querySelector('.v-price').value);
+                                const quantity = parseInt(span.querySelector('.v-qty').value);
+                                const description = span.querySelector('.v-desc').value.trim();
 
-                            axios.put(`/api/items/${id}`, {
-                                name, price, quantity, description
-                            })
-                                .then(() => loadServices())
-                                .catch(() => showError('Ошибка при обновлении варианта'));
+                                axios.put(`/api/items/${id}`, {
+                                    name, price, quantity, description
+                                })
+                                    .then(() => loadServices())
+                                    .catch(() => showError('Ошибка при обновлении варианта'));
+                            };
                         };
-                    };
-                });
+                    });
 
-                variantRow.querySelectorAll('.delete-variant').forEach(delBtn => {
-                    delBtn.onclick = () => {
-                        const li = delBtn.closest('li');
-                        const id = li.dataset.itemId;
-                        if (confirm('Удалить этот вариант?')) {
-                            axios.delete(`/api/items/${id}`)
-                                .then(() => loadServices())
-                                .catch(() => showError('Ошибка при удалении варианта'));
-                        }
-                    };
-                });
+                    variantRow.querySelectorAll('.delete-variant').forEach(delBtn => {
+                        delBtn.onclick = () => {
+                            const li = delBtn.closest('li');
+                            const id = li.dataset.itemId;
+                            if (confirm('Удалить этот вариант?')) {
+                                axios.delete(`/api/items/${id}`)
+                                    .then(() => loadServices())
+                                    .catch(() => showError('Ошибка при удалении варианта'));
+                            }
+                        };
+                    });
+                }
             };
         });
     }
-
 
     function attachEvents() {
         table.querySelectorAll('.delete-btn').forEach(btn => {
@@ -219,7 +221,7 @@ export function initServices() {
         });
     }
 
-    if (isAdmin && addBtn) {
+    if (isSuperAdmin && addBtn) {
         addBtn.onclick = () => {
             const tr = document.createElement('tr');
             tr.innerHTML = `

@@ -51,7 +51,7 @@ class AppointmentController extends Controller
             ->where('status', 'scheduled')
             ->update(['status' => 'missed']);
 
-        $appointments = Appointment::with(['user', 'pet', 'veterinarian', 'services'])->get();
+        $appointments = Appointment::with(['user', 'pet', 'veterinarian.user', 'services'])->get();
 
         return response()->json($appointments);
     }

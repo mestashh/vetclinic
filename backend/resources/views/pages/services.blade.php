@@ -86,7 +86,7 @@
     </style>
 
     <div class="services-wrapper">
-        <h1>Услуги и варианты услуг</h1>
+        <h1>Услуги</h1>
 
         @if(Auth::user()->role === 'superadmin')
             <div class="top-btn">

@@ -11,6 +11,14 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
+
+
+    public function pastAppointments()
+    {
+        return view('pages.past-appointments');
+    }
+
+
     public function startAppointment(Appointment $appointment)
     {
         return view('pages.start-appointment', compact('appointment'));
