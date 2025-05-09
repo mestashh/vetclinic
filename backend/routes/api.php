@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\ServiceItemController;
 
 Route::get('/veterinarians', [UserController::class, 'veterinarians']);
 Route::put('/users/{id}/role', [UserController::class, 'updateRole']);
+Route::post('/appointments/{appointment}/complete', [AppointmentController::class, 'complete']);
 
 
 

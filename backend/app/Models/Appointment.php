@@ -19,7 +19,7 @@ class Appointment extends Model
     // Связь «один ко многим» с клиентом
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'client_id');
     }
 
     // Связь «один ко многим» с питомцем

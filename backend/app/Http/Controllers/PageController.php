@@ -11,24 +11,26 @@ use Illuminate\Http\Request;
 
 class PageController extends Controller
 {
-
-
+    public function startAppointment(Appointment $appointment)
+    {
+        return view('pages.start-appointment', compact('appointment'));
+    }
+    public function selectAppointment()
+    {
+        return view('pages.start-appointment');
+    }
 
     public function aboutMe()
     {
         $user = auth()->user();
 
-        $pets = Pet::where('client_id', $user->id)->get(); // <-- ИСПРАВЛЕНО!
+        $pets = Pet::where('client_id', $user->id)->get();
 
         return view('pages.about', [
             'user' => $user,
             'pets' => $pets,
         ]);
     }
-
-    /**
-     * Страница «Мои записи» для клиента.
-     */
     public function myAppointments()
     {
         return view('pages.my-appointments');
@@ -86,8 +88,6 @@ class PageController extends Controller
     {
         return view('pages.services');
     }
-
-
     public function veterinarians(Request $request)
     {
         $search = $request->input('search');

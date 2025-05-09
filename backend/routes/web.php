@@ -11,8 +11,8 @@ use App\Http\Controllers\PageController;
 
 
 
-
-
+Route::get('/appointments/start/{appointment}', [PageController::class, 'startAppointment'])->name('appointments.start');
+Route::get('/appointments/start', [PageController::class, 'selectAppointment'])->name('appointments.select');
 
 
 

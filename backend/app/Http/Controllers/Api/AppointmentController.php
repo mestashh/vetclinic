@@ -6,9 +6,42 @@ use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\DB;
 class AppointmentController extends Controller
 {
+    public function complete(Request $request, Appointment $appointment)
+    {
+        $data = $request->validate([
+            'service_item_ids' => 'array',
+            'service_item_ids.*' => 'exists:service_items,id',
+            'comment' => 'nullable|string'
+        ]);
+
+        DB::transaction(function () use ($appointment, $data) {
+            $appointment->status = 'completed';
+            if (isset($data['comment'])) {
+                $appointment->comment = $data['comment']; // если поле добавлено в таблицу
+            }
+            $appointment->save();
+
+            // Обновим связи с услугами
+            $appointment->services()->detach();
+
+            if (!empty($data['service_item_ids'])) {
+                // Получим ID услуг по переданным service_item_ids
+                $serviceIds = DB::table('service_items')
+                    ->whereIn('id', $data['service_item_ids'])
+                    ->pluck('service_id')
+                    ->unique()
+                    ->values();
+
+                $appointment->services()->sync($serviceIds);
+            }
+        });
+
+        return response()->json(['message' => 'Приём завершён успешно']);
+    }
+
 
     public function index(Request $request)
     {

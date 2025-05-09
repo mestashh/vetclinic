@@ -18,7 +18,9 @@
                 @if(Auth::user()->role == 'vet')
                     <li><a href="{{ route('appointments') }}"     class="text-white hover:text-gray-300">Приёмы</a></li>
                     <li><a href="{{ route('services') }}"         class="text-white hover:text-gray-300">Услуги</a></li>
-                @endif
+                    <li><a href="{{ route('appointments.select') }}" class="text-white hover:text-gray-300">Проведение приёма</a></li>
+
+                    @endif
 
                 @if(Auth::user()->role == 'admin')
                     <li><a href="{{ route('users') }}"            class="text-white hover:text-gray-300">Клиенты</a></li>

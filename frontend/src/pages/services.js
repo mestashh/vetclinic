@@ -74,7 +74,6 @@ export function initServices() {
             `;
                 row.after(variantRow);
 
-                // Обработка кнопок ✏️ и 🗑️
                 variantRow.querySelectorAll('.edit-variant').forEach(editBtn => {
                     editBtn.onclick = () => {
                         const li = editBtn.closest('li');

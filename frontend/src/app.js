@@ -1,4 +1,5 @@
 import './bootstrap';
+import {initStartAppointment} from "./pages/start-appointment.js";
 
 document.addEventListener('DOMContentLoaded', () => {
     const p = window.location.pathname;
@@ -7,8 +8,6 @@ document.addEventListener('DOMContentLoaded', () => {
         import('./pages/users').then(m => m.initUsers());
     } else if (p.startsWith('/clients')) {
         import('./pages/users.js').then(m => m.initClients());
-    } else if (p.startsWith('/appointments')) {
-        import('./pages/appointments').then(m => m.initAppointments());
     } else if (p.startsWith('/pets')) {
         import('./pages/pets').then(m => m.initPets());
     } else if (p.startsWith('/services')) {
@@ -23,5 +22,9 @@ document.addEventListener('DOMContentLoaded', () => {
         import('./pages/news').then(m => m.initNews());
     }else if (p.startsWith('/change-roles')) {
         import('./pages/changeRoles').then(m => m.initChange());
+    } else if (p.startsWith('/appointments/start')) {
+        import('./pages/start-appointment.js').then(m => m.initStartAppointment());
+    }else if (p.startsWith('/appointments')) {
+        import('./pages/appointments').then(m => m.initAppointments());
     }
 });
