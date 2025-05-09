@@ -51,27 +51,43 @@
             cursor: pointer;
         }
 
-        .edit-btn    { background-color: #3b82f6; }
         .confirm-btn { background-color: #10b981; }
-        .cancel-btn  { background-color: #6b7280; }
-
-        .edit-btn:hover    { background-color: #2563eb; }
         .confirm-btn:hover { background-color: #059669; }
-        .cancel-btn:hover  { background-color: #4b5563; }
 
         .action-buttons {
             display: flex;
             gap: 0.4rem;
             justify-content: center;
         }
+
+        .filters {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .filters input,
+        .filters select {
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin: 0 0.5rem;
+        }
     </style>
 
     <div class="roles-wrapper">
         <h1>Изменение ролей пользователей</h1>
-        <div style="margin-bottom: 1.5rem; text-align: center;">
-            <input type="text" id="searchInput" placeholder="Поиск по пользователям..."
-                   style="width: 300px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px;" />
+
+        <div class="filters">
+            <input type="text" id="searchInput" placeholder="Поиск по пользователям...">
+            <select id="roleFilter">
+                <option value="">Все роли</option>
+                <option value="client">Клиент</option>
+                <option value="vet">Ветеринар</option>
+                <option value="admin">Админ</option>
+                <option value="superadmin">Супер-админ</option>
+            </select>
         </div>
+
         <table id="rolesTable">
             <thead>
             <tr>

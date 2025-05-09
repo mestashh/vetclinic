@@ -25,4 +25,8 @@ class Service extends Model
             'appointment_id'
         );
     }
+    public function items()
+    {
+        return $this->hasMany(ServiceItem::class);
+    }
 }

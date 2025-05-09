@@ -5,9 +5,12 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\PageController;
 
 
-Route::get('/change-roles', function () {
-    return view('pages.change-roles');
-})->name('change-roles');
+
+
+
+
+
+
 
 
 
@@ -23,9 +26,13 @@ Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::get('/news', [PageController::class, 'news'])->name('news');
+
 Route::get('/', function () {
     return view('home');
 })->name('home');
+Route::get('/change-roles', function () {
+    return view('pages.change-roles');
+})->name('change-roles');
 
 Route::middleware('auth')->group(function () {
     Route::get('/my-appointments', [PageController::class, 'myAppointments'])->name('my-appointments');

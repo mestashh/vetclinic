@@ -13,15 +13,13 @@ use App\Http\Controllers\Api\NewsController;
 
 
 
+
+
+
+
+
+
 Route::put('/users/{user}/role', [UserController::class, 'updateRole']);
-
-
-
-
-
-
-
-
 Route::get('/news', [NewsController::class, 'index']);
 Route::post('/news', [NewsController::class, 'store']);
 Route::get('/veterinarians/{veterinarian}/appointments/{date}', [AppointmentController::class, 'busySlots']);
