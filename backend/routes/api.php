@@ -7,13 +7,17 @@ use App\Http\Controllers\Api\PetController;
 use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\VeterinarianController;
+use App\Http\Controllers\Api\NewsController;
+
+
+Route::get('/news', [NewsController::class, 'index']);
+Route::post('/news', [NewsController::class, 'store']);
+
+
 
 
 
 Route::get('/veterinarians/{veterinarian}/appointments/{date}', [AppointmentController::class, 'busySlots']);
-
-
-
 Route::get('/veterinarians/by-user/{user}', [VeterinarianController::class, 'byUser']);
 Route::get('/users/{user}/pets', [UserController::class, 'pets']);
 Route::get('/users', [UserController::class, 'index']);
