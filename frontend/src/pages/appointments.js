@@ -1,6 +1,14 @@
 import axios from 'axios';
 
 export function initAppointments() {
+    function translateStatus(status) {
+        switch (status) {
+            case 'scheduled': return 'Запланирован';
+            case 'completed': return 'Проведён';
+            case 'missed': return 'Не проведён';
+            default: return '—';
+        }
+    }
     const table = document.getElementById('appointmentsTable');
     const tableBody = table.querySelector('tbody');
     const addBtn = document.getElementById('addAppointmentBtn');
@@ -120,7 +128,7 @@ export function initAppointments() {
                 ? `<button class="save-btn btn-icon confirm">✅</button><button class="cancel-btn btn-icon cancel">❌</button>`
                 : `<button class="edit-btn btn-icon edit">✏️</button><button class="delete-btn btn-icon delete">🗑️</button>`)
             : '';
-        const statusCell = `<span>${appt?.status || '—'}</span>`;
+        const statusCell = `<span>${translateStatus(appt?.status)}</span>`;
 
         return `<tr ${idAttr} class="border-b ${isNew ? 'bg-gray-100' : ''}">
     <td class="px-2 py-2">${userCell}</td>

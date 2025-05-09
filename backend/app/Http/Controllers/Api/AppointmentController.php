@@ -5,15 +5,24 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class AppointmentController extends Controller
 {
+
     public function index(Request $request)
     {
+        $now = Carbon::now();
+
+        Appointment::where('scheduled_at', '<', $now)
+            ->where('status', 'scheduled')
+            ->update(['status' => 'missed']);
+
         $appointments = Appointment::with(['user', 'pet', 'veterinarian', 'services'])->get();
 
         return response()->json($appointments);
     }
+
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -21,7 +30,9 @@ class AppointmentController extends Controller
             'pet_id' => 'required|exists:pets,id',
             'veterinarian_id' => 'required|exists:veterinarians,id',
             'scheduled_at' => 'required|date',
+            'status' => 'in:scheduled,completed,missed'
         ]);
+
 
         $appointment = Appointment::create($data);
 
@@ -34,6 +45,7 @@ class AppointmentController extends Controller
             'pet_id' => 'required|exists:pets,id',
             'veterinarian_id' => 'required|exists:veterinarians,id',
             'scheduled_at' => 'required|date',
+            'status' => 'in:scheduled,completed,missed'
         ]);
 
         $appointment->update($data);
