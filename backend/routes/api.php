@@ -8,10 +8,12 @@ use App\Http\Controllers\Api\AppointmentController;
 use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\VeterinarianController;
 use App\Http\Controllers\Api\NewsController;
+use App\Http\Controllers\Api\ServiceItemController;
 
 
 
-
+Route::apiResource('services.items', ServiceItemController::class)->shallow();
+Route::apiResource('items', ServiceItemController::class)->only(['update', 'destroy']);
 
 
 
@@ -32,7 +34,7 @@ Route::apiResource('animals', PetController::class)->parameters([
     'animals' => 'pet'
 ]);
 Route::apiResource('appointments', AppointmentController::class);
-Route::apiResource('procedures',   ServiceController::class);
+Route::apiResource('services', ServiceController::class);
 Route::apiResource('veterinarians',VeterinarianController::class);
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login',    [AuthController::class, 'login']);

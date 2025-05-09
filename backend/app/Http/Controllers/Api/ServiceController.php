@@ -10,14 +10,11 @@ class ServiceController extends Controller
 {
     public function index()
     {
-        return response()->json([
-            'data' => Service::all()
-        ]);
-    }
+        $services = Service::with('items')->get();
 
-    public function showServicesPage()
-    {
-        return view('pages.services');
+        return response()->json([
+            'data' => $services
+        ]);
     }
 
     public function store(Request $request)
@@ -25,7 +22,6 @@ class ServiceController extends Controller
         $validated = $request->validate([
             'name'        => 'required|string|max:100',
             'description' => 'nullable|string',
-            'price'       => 'required|numeric',
         ]);
 
         $service = Service::create($validated);
@@ -34,7 +30,7 @@ class ServiceController extends Controller
 
     public function show($id)
     {
-        $service = Service::findOrFail($id);
+        $service = Service::with('items')->findOrFail($id);
         return response()->json($service);
     }
 
@@ -45,7 +41,6 @@ class ServiceController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'price' => 'required|numeric'
         ]);
 
         $service->update($validated);
@@ -60,5 +55,4 @@ class ServiceController extends Controller
 
         return response()->noContent();
     }
-
 }

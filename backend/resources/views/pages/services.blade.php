@@ -1,11 +1,11 @@
 @extends('layouts.app')
 
-@section('title', 'Услуги')
+@section('title', 'Услуги и варианты услуг')
 
 @section('content')
     <style>
         .services-wrapper {
-            max-width: 960px;
+            max-width: 1000px;
             margin: 2rem auto;
             background: #ffffff;
             padding: 2rem;
@@ -50,15 +50,8 @@
             cursor: pointer;
         }
 
-        .edit-btn { background-color: #3b82f6; }
-        .edit-btn:hover { background-color: #2563eb; }
-
-        .delete-btn { background-color: #ef4444; }
-        .delete-btn:hover { background-color: #dc2626; }
-
         .confirm-btn { background-color: #10b981; }
         .cancel-btn { background-color: #6b7280; }
-
         .confirm-btn:hover { background-color: #059669; }
         .cancel-btn:hover { background-color: #4b5563; }
 
@@ -83,60 +76,35 @@
             cursor: pointer;
         }
 
-        input[type="text"], input[type="number"] {
+        input[type="text"], textarea {
             width: 100%;
             padding: 0.4rem;
             border: 1px solid #d1d5db;
             border-radius: 4px;
             background-color: #f9fafb;
         }
-        .btn-icon {
-            padding: 0.3rem 0.6rem;
-            font-size: 0.875rem;
-            border: none;
-            border-radius: 4px;
-            color: white;
-            cursor: pointer;
-        }
-
-        .edit { background-color: #3b82f6; }
-        .edit:hover { background-color: #2563eb; }
-
-        .delete { background-color: #ef4444; }
-        .delete:hover { background-color: #dc2626; }
-
-        .confirm { background-color: #10b981; }
-        .confirm:hover { background-color: #059669; }
-
-        .cancel { background-color: #6b7280; }
-        .cancel:hover { background-color: #4b5563; }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.4rem;
-            justify-content: center;
-        }
-
     </style>
 
     <div class="services-wrapper">
-        <h1>Услуги</h1>
+        <h1>Услуги и варианты услуг</h1>
+
         @if(Auth::user()->role === 'superadmin')
             <div class="top-btn">
                 <button id="addServiceBtn">Добавить услугу</button>
             </div>
         @endif
+
         <div style="margin-bottom: 1rem; text-align: center;">
             <input type="text" id="searchInput" placeholder="Поиск по услугам..."
                    style="width: 300px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px;" />
         </div>
+
         <div class="overflow-x-auto">
             <table id="servicesTable">
                 <thead>
                 <tr>
                     <th>Название</th>
                     <th>Описание</th>
-                    <th>Цена</th>
                     @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
                         <th>Действия</th>
                     @endif
