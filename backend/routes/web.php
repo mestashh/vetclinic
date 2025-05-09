@@ -5,6 +5,16 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\PageController;
 
 
+Route::get('/change-roles', function () {
+    return view('pages.change-roles');
+})->name('change-roles');
+
+
+
+
+
+
+
 
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

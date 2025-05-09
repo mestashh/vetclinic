@@ -10,13 +10,20 @@ use App\Http\Controllers\Api\VeterinarianController;
 use App\Http\Controllers\Api\NewsController;
 
 
+
+
+
+Route::put('/users/{user}/role', [UserController::class, 'updateRole']);
+
+
+
+
+
+
+
+
 Route::get('/news', [NewsController::class, 'index']);
 Route::post('/news', [NewsController::class, 'store']);
-
-
-
-
-
 Route::get('/veterinarians/{veterinarian}/appointments/{date}', [AppointmentController::class, 'busySlots']);
 Route::get('/veterinarians/by-user/{user}', [VeterinarianController::class, 'byUser']);
 Route::get('/users/{user}/pets', [UserController::class, 'pets']);

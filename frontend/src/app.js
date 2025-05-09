@@ -5,9 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.currentUserRole = window.currentUserRole || '';
     if (p.startsWith('/users')) {
         import('./pages/users').then(m => m.initUsers());
-    }
-
-    if (p.startsWith('/clients')) {
+    } else if (p.startsWith('/clients')) {
         import('./pages/users.js').then(m => m.initClients());
     } else if (p.startsWith('/appointments')) {
         import('./pages/appointments').then(m => m.initAppointments());
@@ -23,5 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         import('./pages/myAppointments').then(m => m.initMyAppointments());
     }else if (p.startsWith('/news')) {
         import('./pages/news').then(m => m.initNews());
+    }else if (p.startsWith('/change-roles')) {
+        import('./pages/changeRoles').then(m => m.initChange());
     }
 });

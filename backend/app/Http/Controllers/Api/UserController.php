@@ -8,6 +8,35 @@ use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
+
+
+    public function updateRole(Request $request, $id)
+    {
+        $request->validate([
+            'role' => 'required|in:client,vet,admin,superadmin'
+        ]);
+
+        $user = User::findOrFail($id);
+        $user->update(['role' => $request->role]);
+
+        return response()->json(['message' => 'Роль успешно изменена']);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     public function index(Request $request)
     {
         return response()->json([
