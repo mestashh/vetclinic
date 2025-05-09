@@ -100,7 +100,10 @@
         <div class="top-btn">
             <button id="addPetBtn">Добавить питомца</button>
         </div>
-
+        <div style="margin-bottom: 1rem; text-align: center;">
+            <input type="text" id="searchInput" placeholder="Поиск по питомцам..."
+                   style="width: 300px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px;" />
+        </div>
         <table id="petsTable">
             <thead>
             <tr>

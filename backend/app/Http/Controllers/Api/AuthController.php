@@ -61,7 +61,7 @@ class AuthController extends Controller
             $role = Auth::user()->role;
 
             return match ($role) {
-                'client'     => redirect()->route('my-appointments'),
+                'client'     => redirect()->route('about'),
                 'vet'        => redirect()->route('appointments'),
                 'admin'      => redirect()->route('users'),
                 'superadmin' => redirect()->route('users'),

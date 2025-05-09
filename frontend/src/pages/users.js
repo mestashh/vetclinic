@@ -24,6 +24,8 @@ export function initUsers() {
                     </tr>`).join('');
                 table.querySelector('tbody').innerHTML = html;
                 attachEvents();
+                applySearch(); // фильтрация после загрузки
+
             })
             .catch(() => showError("Не удалось загрузить клиентов"));
     }
@@ -91,6 +93,17 @@ export function initUsers() {
             tr.querySelector('.cancel-btn').onclick = () => tr.remove();
         };
     }
+    function applySearch() {
+        const query = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+        table.querySelectorAll('tbody tr').forEach(row => {
+            const text = Array.from(row.querySelectorAll('input'))
+                .map(i => i.value.toLowerCase())
+                .join(' ');
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
+    document.getElementById('searchInput')?.addEventListener('input', applySearch);
+
 
     loadUsers();
 }

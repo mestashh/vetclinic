@@ -134,6 +134,7 @@ export function initAppointments() {
             const { data } = await axios.get('/api/appointments');
             let arr = Array.isArray(data) ? data : (data.data || []);
             tableBody.innerHTML = (await Promise.all(arr.map(makeRow))).join('');
+            applySearch();
         } catch (e) {
             showError("Ошибка загрузки приёмов");
         }
@@ -219,13 +220,22 @@ export function initAppointments() {
             timeSelect.innerHTML = timeOptions;
         }
     });
-
     if (addBtn) {
         addBtn.onclick = async () => {
             const html = await makeRow(null);
             tableBody.insertAdjacentHTML('afterbegin', html);
         };
     }
+    function applySearch() {
+        const query = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+        tableBody.querySelectorAll('tr').forEach(row => {
+            const values = Array.from(row.querySelectorAll('input, select'))
+                .map(i => i.value?.toLowerCase() || '')
+                .join(' ');
+            row.style.display = values.includes(query) ? '' : 'none';
+        });
+    }
+    document.getElementById('searchInput')?.addEventListener('input', applySearch);
 
 
     loadRefs().then(loadAppointments);

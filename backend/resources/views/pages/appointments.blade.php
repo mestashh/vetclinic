@@ -93,6 +93,10 @@
                 <button id="addAppointmentBtn">Добавить приём</button>
             </div>
         @endif
+        <div style="margin-bottom: 1rem; text-align: center;">
+            <input type="text" id="searchInput" placeholder="Поиск по приёмам..."
+                   style="width: 300px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px;" />
+        </div>
         <table id="appointmentsTable">
             <thead>
             <tr>

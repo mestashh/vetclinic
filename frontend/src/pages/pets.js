@@ -140,7 +140,17 @@ export function initPets() {
 
         tr.querySelector('.cancel-btn').onclick = () => tr.remove();
     }
-
+    function applySearch() {
+        const query = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+        table.querySelectorAll('tbody tr').forEach(row => {
+            const text = Array.from(row.querySelectorAll('input, select'))
+                .map(i => i.value?.toLowerCase?.() || '')
+                .join(' ');
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
+    document.getElementById('searchInput')?.addEventListener('input', applySearch);
+    applySearch();
 
     loadRefs().then(() => {
         addBtn.onclick = handleAdd;

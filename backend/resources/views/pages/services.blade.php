@@ -121,13 +121,15 @@
 
     <div class="services-wrapper">
         <h1>Услуги</h1>
-
-        @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
+        @if(Auth::user()->role === 'superadmin')
             <div class="top-btn">
                 <button id="addServiceBtn">Добавить услугу</button>
             </div>
         @endif
-
+        <div style="margin-bottom: 1rem; text-align: center;">
+            <input type="text" id="searchInput" placeholder="Поиск по услугам..."
+                   style="width: 300px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px;" />
+        </div>
         <div class="overflow-x-auto">
             <table id="servicesTable">
                 <thead>

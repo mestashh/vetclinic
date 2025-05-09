@@ -103,6 +103,10 @@
             <button id="addUserBtn">Добавить клиента</button>
         </div>
 
+        <div style="margin-bottom: 1rem; text-align: center;">
+            <input type="text" id="searchInput" placeholder="Поиск по клиентам..."
+                   style="width: 300px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px;" />
+        </div>
         <div class="overflow-x-auto">
             <table id="usersTable">
                 <thead>

@@ -35,6 +35,7 @@ export function initServices() {
                 }).join('');
 
                 table.querySelector('tbody').innerHTML = html;
+                applySearch();
                 if (isAdmin) attachEvents();
             })
             .catch(() => showError('Ошибка загрузки услуг'));
@@ -106,6 +107,16 @@ export function initServices() {
             table.querySelector('tbody').prepend(tr);
         };
     }
+    function applySearch() {
+        const query = document.getElementById('searchInput')?.value?.toLowerCase() || '';
+        table.querySelectorAll('tbody tr').forEach(row => {
+            const text = Array.from(row.querySelectorAll('input'))
+                .map(i => i.value.toLowerCase())
+                .join(' ');
+            row.style.display = text.includes(query) ? '' : 'none';
+        });
+    }
 
+    document.getElementById('searchInput')?.addEventListener('input', applySearch);
     loadServices();
 }
