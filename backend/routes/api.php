@@ -11,17 +11,13 @@ use App\Http\Controllers\Api\VeterinarianController;
 
 
 Route::get('/veterinarians/by-user/{user}', [VeterinarianController::class, 'byUser']);
-
-
-
-
-
-
 Route::get('/users/{user}/pets', [UserController::class, 'pets']);
 Route::get('/users', [UserController::class, 'index']);
 Route::get('/veterinarians', [VeterinarianController::class, 'index']);
 Route::apiResource('users', UserController::class);
-Route::apiResource('animals',      PetController::class);
+Route::apiResource('animals', PetController::class)->parameters([
+    'animals' => 'pet'
+]);
 Route::apiResource('appointments', AppointmentController::class);
 Route::apiResource('procedures',   ServiceController::class);
 Route::apiResource('veterinarians',VeterinarianController::class);

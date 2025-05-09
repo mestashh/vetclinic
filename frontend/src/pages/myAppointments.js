@@ -38,14 +38,14 @@ export function initMyAppointments() {
         return new Date(t.getFullYear(), t.getMonth(), t.getDate(), SLOT_TIMES[0].h, SLOT_TIMES[0].m);
     }
 
-    function buildOptions(date, currentFull) {
+    // Теперь value = "HH:MM", selected по простому совпадению
+    function buildOptions(selectedTime) {
         return SLOT_TIMES.map(({ h, m }) => {
             const hh = String(h).padStart(2, '0');
             const mm = String(m).padStart(2, '0');
-            const full = `${date}T${hh}:${mm}`;
-            const disabled = new Date(full) <= new Date() ? ' disabled' : '';
-            const sel = full === currentFull ? ' selected' : '';
-            return `<option value="${full}"${disabled}${sel}>${hh}:${mm}</option>`;
+            const tv = `${hh}:${mm}`;
+            const sel = tv === selectedTime ? ' selected' : '';
+            return `<option value="${tv}"${sel}>${tv}</option>`;
         }).join('');
     }
 
@@ -53,56 +53,73 @@ export function initMyAppointments() {
         const isNew = !appt;
         const idAttr = isNew ? '' : `data-id="${appt.id}"`;
 
-        const slot = isNew ? getNextSlot() : new Date(appt.scheduled_at);
-        const dateVal = slot.toISOString().slice(0, 10);
-        const fullVal = slot.toISOString().slice(0, 16);
+        // --- разбираем время вручную ---
+        let slot;
+        if (isNew) {
+            slot = getNextSlot();
+        } else {
+            // "2025-05-09 11:30:00"
+            const [datePart, timePart] = appt.scheduled_at.split(' ');
+            const [Y, M, D] = datePart.split('-').map(Number);
+            const [h, m] = timePart.split(':').map(Number);
+            slot = new Date(Y, M - 1, D, h, m);
+        }
+
+        const yyyy = slot.getFullYear();
+        const mm = String(slot.getMonth() + 1).padStart(2, '0');
+        const dd = String(slot.getDate()).padStart(2, '0');
+        const hh = String(slot.getHours()).padStart(2, '0');
+        const min = String(slot.getMinutes()).padStart(2, '0');
+
+        const dateVal = `${yyyy}-${mm}-${dd}`;
+        const timeVal = `${hh}:${min}`;
         const minDate = getNextSlot().toISOString().slice(0, 10);
 
         const userCell = window.currentUserRole === 'client'
             ? `<input type="text" class="w-full border-none bg-gray-100" value="${window.currentUserName}" disabled>`
             : `<select class="user-select w-full border-none"${isNew ? '' : ' disabled'}>
-                <option value="">— клиент —</option>
-                ${users.map(u => `
-                    <option value="${u.id}"${appt?.client_id === u.id ? ' selected' : ''}>
-                        ${[u.last_name, u.first_name, u.middle_name].filter(Boolean).join(' ')}
-                    </option>`).join('')}
-            </select>`;
+          <option value="">— клиент —</option>
+          ${users.map(u => `
+            <option value="${u.id}"${appt?.client_id === u.id ? ' selected' : ''}>
+              ${[u.last_name, u.first_name, u.middle_name].filter(Boolean).join(' ')}
+            </option>`).join('')}
+        </select>`;
 
         const petCell = `
-            <select class="pet-select w-full border-none"${isNew ? '' : ' disabled'}>
-                <option value="">Загрузка...</option>
-            </select>`;
+      <select class="pet-select w-full border-none"${isNew ? '' : ' disabled'}>
+        <option value="">Загрузка...</option>
+      </select>`;
 
         const vetCell = `
-            <select class="vet-select w-full border-none"${isNew ? '' : ' disabled'}>
-                <option value="">— ветеринар —</option>
-                ${veterinarians.map(v => `
-                    <option value="${v.id}"${appt?.veterinarian_id === v.id ? ' selected' : ''}>
-                        ${[v.last_name, v.first_name, v.middle_name].filter(Boolean).join(' ')}
-                    </option>`).join('')}
-            </select>`;
+      <select class="vet-select w-full border-none"${isNew ? '' : ' disabled'}>
+        <option value="">— ветеринар —</option>
+        ${veterinarians.map(v => `
+          <option value="${v.id}"${appt?.veterinarian_id === v.id ? ' selected' : ''}>
+            ${[v.last_name, v.first_name, v.middle_name].filter(Boolean).join(' ')}
+          </option>`).join('')}
+      </select>`;
 
         const dateCell = `
-            <input type="date" class="date-input w-full border-none"${isNew ? '' : ' disabled'}
-                value="${dateVal}" min="${minDate}">
-            <select class="time-select w-full border-none"${isNew ? '' : ' disabled'}>
-                ${buildOptions(dateVal, fullVal)}
-            </select>`;
+      <input type="date" class="date-input w-full border-none"${isNew ? '' : ' disabled'}
+        value="${dateVal}" min="${minDate}">
+      <select class="time-select w-full border-none"${isNew ? '' : ' disabled'}>
+        ${buildOptions(timeVal)}
+      </select>`;
 
         const actions = isNew
             ? `<button class="save-btn btn-icon confirm">✅</button>
-               <button class="cancel-btn btn-icon cancel">❌</button>`
+         <button class="cancel-btn btn-icon cancel">❌</button>`
             : `<button class="edit-btn btn-icon edit">✏️</button>
-               <button class="delete-btn btn-icon delete">🗑️</button>`;
+         <button class="delete-btn btn-icon delete">🗑️</button>`;
 
         return `
-        <tr ${idAttr} class="border-b ${isNew ? 'bg-gray-100' : ''}">
-            <td class="px-4 py-2">${userCell}</td>
-            <td class="px-4 py-2">${petCell}</td>
-            <td class="px-4 py-2">${vetCell}</td>
-            <td class="px-4 py-2">${dateCell}</td>
-            <td class="px-4 py-2 actions">${actions}</td>
-        </tr>`;
+      <tr ${idAttr} class="border-b ${isNew ? 'bg-gray-100' : ''}">
+        <td class="px-4 py-2">${userCell}</td>
+        <td class="px-4 py-2">${petCell}</td>
+        <td class="px-4 py-2">${vetCell}</td>
+        <td class="px-4 py-2">${dateCell}</td>
+        <td class="px-4 py-2 actions">${actions}</td>
+      </tr>`;
     }
 
     function loadAppointments() {
@@ -114,108 +131,76 @@ export function initMyAppointments() {
                 }
                 tableBody.innerHTML = arr.map(makeRow).join('');
 
+                // загрузить питомцев для каждого
                 arr.forEach(appt => {
                     const row = tableBody.querySelector(`tr[data-id="${appt.id}"]`);
-                    const petSelect = row.querySelector('.pet-select');
                     axios.get(`/api/users/${appt.client_id}/pets`)
                         .then(res => {
-                            petSelect.innerHTML = res.data.data.map(p => `
-                                <option value="${p.id}"${appt.pet_id === p.id ? ' selected' : ''}>
-                                    ${p.name}
-                                </option>`).join('');
-                        })
-                        .catch(() => {
-                            petSelect.innerHTML = '<option value="">Ошибка загрузки</option>';
+                            row.querySelector('.pet-select').innerHTML =
+                                res.data.data.map(p =>
+                                    `<option value="${p.id}"${appt.pet_id === p.id ? ' selected' : ''}>
+                     ${p.name}
+                   </option>`
+                                ).join('');
                         });
                 });
             })
             .catch(e => alert('Ошибка загрузки: ' + e));
     }
 
-    addBtn.onclick = () => {
-        const html = makeRow(null);
-        tableBody.insertAdjacentHTML('afterbegin', html);
-
-        if (window.currentUserRole === 'client') {
-            const row = tableBody.querySelector('tr');
-            const petSelect = row.querySelector('.pet-select');
-            axios.get(`/api/users/${window.currentUserId}/pets`)
-                .then(res => {
-                    petSelect.innerHTML = res.data.data
-                        .map(p => `<option value="${p.id}">${p.name}</option>`)
-                        .join('');
-                })
-                .catch(e => alert('Ошибка питомцев: ' + e));
-        }
-    };
-
     tableBody.addEventListener('click', event => {
         const row = event.target.closest('tr');
         const id = row?.dataset.id;
         const btn = event.target;
 
-        if (btn.classList.contains('save-btn')) {
+        if (btn.classList.contains('save-btn') || btn.classList.contains('update-btn')) {
             const clientId = window.currentUserRole === 'client'
                 ? window.currentUserId
                 : row.querySelector('.user-select').value;
-
+            const date = row.querySelector('.date-input').value;
+            const time = row.querySelector('.time-select').value;
             const payload = {
                 client_id: clientId,
                 pet_id: row.querySelector('.pet-select').value,
                 veterinarian_id: row.querySelector('.vet-select').value,
-                scheduled_at: `${row.querySelector('.date-input').value}T${row.querySelector('.time-select').value.slice(11)}:00`
+                scheduled_at: `${date}T${time}:00`
             };
-
-            return axios.post('/api/appointments', payload)
-                .then(loadAppointments)
-                .catch(e => alert('Ошибка: ' + e));
+            const method = btn.classList.contains('save-btn') ? 'post' : 'put';
+            const url = method === 'post' ? '/api/appointments' : `/api/appointments/${id}`;
+            return axios[method](url, payload).then(loadAppointments);
         }
 
         if (btn.classList.contains('edit-btn')) {
             row.querySelectorAll('.pet-select, .vet-select, .date-input, .time-select')
                 .forEach(el => el.disabled = false);
-
             row.querySelector('.actions').innerHTML = `
-                <button class="update-btn btn-icon confirm">✅</button>
-                <button class="cancel-btn btn-icon cancel">❌</button>
-            `;
-            return;
+        <button class="update-btn btn-icon confirm">✅</button>
+        <button class="cancel-btn btn-icon cancel">❌</button>`;
         }
 
-        if (btn.classList.contains('update-btn')) {
-            const clientId = window.currentUserRole === 'client'
-                ? window.currentUserId
-                : row.querySelector('.user-select').value;
-
-            const payload = {
-                client_id: clientId,
-                pet_id: row.querySelector('.pet-select').value,
-                veterinarian_id: row.querySelector('.vet-select').value,
-                scheduled_at: `${row.querySelector('.date-input').value}T${row.querySelector('.time-select').value.slice(11)}:00`
-            };
-
-            return axios.put(`/api/appointments/${id}`, payload)
-                .then(loadAppointments)
-                .catch(e => alert('Ошибка обновления: ' + e));
-        }
-
-        if (btn.classList.contains('cancel-btn')) {
-            return loadAppointments();
-        }
+        if (btn.classList.contains('cancel-btn')) return loadAppointments();
 
         if (btn.classList.contains('delete-btn')) {
             return axios.delete(`/api/appointments/${id}`)
-                .then(loadAppointments)
-                .catch(e => alert('Ошибка удаления: ' + e));
+                .then(loadAppointments);
         }
 
         if (event.target.classList.contains('date-input')) {
-            const row = event.target.closest('tr');
             const dateVal = event.target.value;
-            const timeSelect = row.querySelector('.time-select');
-            timeSelect.innerHTML = buildOptions(dateVal, '');
+            row.querySelector('.time-select').innerHTML = buildOptions('');
         }
     });
+
+    addBtn.onclick = () => {
+        tableBody.insertAdjacentHTML('afterbegin', makeRow(null));
+        // и сразу загрузить питомцев
+        const row = tableBody.querySelector('tr');
+        axios.get(`/api/users/${window.currentUserId}/pets`)
+            .then(res => {
+                row.querySelector('.pet-select').innerHTML =
+                    res.data.data.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+            });
+    };
 
     loadRefs().then(loadAppointments);
 }

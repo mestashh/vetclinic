@@ -44,22 +44,17 @@ class PetController extends Controller
     public function update(Request $request, Pet $pet)
     {
         $validated = $request->validate([
-            'name'    => 'required|string|max:255',
+            'name' => 'required|string|max:255',
             'species' => 'required|string|max:255',
-            'breed'   => 'nullable|string|max:255',
-            'age'     => 'nullable|integer|min:0|max:100',
+            'breed' => 'nullable|string|max:255',
+            'age' => 'nullable|integer|min:0',
         ]);
 
         $pet->update($validated);
 
-        return response()->json([
-            'data' => $pet
-        ], 200);
+        return response()->json(['data' => $pet]);
     }
 
-    /**
-     * Удаляет питомца.
-     */
     public function destroy(Pet $pet)
     {
         $pet->delete();

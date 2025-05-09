@@ -7,30 +7,15 @@ use App\Http\Controllers\PageController;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
-
-
 Route::get('/', function () {
     return view('home');
 })->name('home');
-
 Route::get('/my-appointments', [PageController::class, 'myAppointments'])->name('my-appointments');
-
 Route::middleware('auth')->group(function () {
     Route::get('/users', [PageController::class, 'users'])->name('users');
     Route::get('/veterinarians', [PageController::class, 'veterinarians'])->name('veterinarians');
