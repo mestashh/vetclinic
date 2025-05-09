@@ -10,18 +10,17 @@ export function initVets() {
         axios.get('/api/veterinarians')
             .then(({ data }) => {
                 const html = (data.data || []).map(v => {
-                    const fullName = [v.last_name, v.first_name, v.middle_name]
-                        .filter(Boolean)
-                        .join(' ');
+                    const fullName = [v.user?.last_name, v.user?.first_name, v.user?.middle_name]
+                        .filter(Boolean).join(' ');
                     return `
                     <tr data-id="${v.id}" class="bg-white border-b hover:bg-gray-50">
                         <td class="px-4 py-2"><input disabled value="${fullName}" class="vet-input w-full border-none"></td>
                         <td class="px-4 py-2"><input disabled value="${v.specialization || ''}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.phone || ''}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.email || ''}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2 space-x-1">
-                            <button class="edit-btn bg-blue-500 text-white px-2 rounded">Редактировать</button>
-                            <button class="delete-btn bg-red-500 text-white px-2 rounded">Удалить</button>
+                        <td class="px-4 py-2"><input disabled value="${v.user?.phone || ''}" class="vet-input w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${v.user?.email || ''}" class="vet-input w-full border-none"></td>
+                        <td class="px-4 py-2 action-buttons">
+                            <button class="edit-btn btn-icon">✏️</button>
+                            <button class="delete-btn btn-icon">🗑️</button>
                         </td>
                     </tr>`;
                 }).join('');
@@ -46,8 +45,11 @@ export function initVets() {
             btn.onclick = () => {
                 const row = btn.closest('tr');
                 row.querySelectorAll('input').forEach(i => i.disabled = false);
-                btn.textContent = 'Сохранить';
-                btn.classList.replace('edit-btn', 'update-btn');
+                const cell = btn.closest('td');
+                cell.innerHTML = `
+                    <button class="update-btn btn-icon confirm-btn">✅</button>
+                    <button class="cancel-btn btn-icon cancel-btn">❌</button>
+                `;
                 attachEvents();
             };
         });
@@ -71,20 +73,21 @@ export function initVets() {
             const tr = document.createElement('tr');
             tr.className = 'bg-gray-100 border-b';
             tr.innerHTML = `
-                <td class="px-4 py-2"><input placeholder="Фамилия" class="new-input w-full" /></td>
-                <td class="px-4 py-2"><input placeholder="Имя" class="new-input w-full" /></td>
-                <td class="px-4 py-2"><input placeholder="Отчество" class="new-input w-full" /></td>
+                <td class="px-4 py-2"><input placeholder="ФИО" class="new-input w-full" /></td>
                 <td class="px-4 py-2"><input placeholder="Специализация" class="new-input w-full" /></td>
                 <td class="px-4 py-2"><input placeholder="Телефон" class="new-input w-full" /></td>
                 <td class="px-4 py-2"><input placeholder="Email" class="new-input w-full" /></td>
-                <td class="px-4 py-2 space-x-1">
-                    <button class="save-btn bg-green-500 text-white px-2 rounded">Сохранить</button>
-                    <button class="cancel-btn bg-gray-500 text-white px-2 rounded">Отмена</button>
+                <td class="px-4 py-2 action-buttons">
+                    <button class="save-btn btn-icon confirm-btn">✅</button>
+                    <button class="cancel-btn btn-icon cancel-btn">❌</button>
                 </td>`;
             table.prepend(tr);
+
             tr.querySelector('.save-btn').onclick = () => {
-                const [last_name, first_name, middle_name, specialization, phone, email] =
+                const [fullName, specialization, phone, email] =
                     Array.from(tr.querySelectorAll('.new-input')).map(i => i.value);
+
+                const [last_name, first_name, middle_name] = (fullName + '  ').split(' ');
                 axios.post('/api/veterinarians', {
                     last_name,
                     first_name,
@@ -95,8 +98,10 @@ export function initVets() {
                 }).then(() => loadVets())
                     .catch(() => showError("Ошибка при создании"));
             };
+
             tr.querySelector('.cancel-btn').onclick = () => tr.remove();
         };
     }
+
     loadVets();
 }

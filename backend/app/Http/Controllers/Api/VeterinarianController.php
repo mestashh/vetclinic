@@ -13,10 +13,13 @@ class VeterinarianController extends Controller
         $vets = \App\Models\Veterinarian::with('user')->get()->map(function ($v) {
             return [
                 'id'           => $v->id,
+                'specialization' => $v->specialization,
                 'user'         => [
                     'first_name'  => $v->user?->first_name,
                     'middle_name' => $v->user?->middle_name,
                     'last_name'   => $v->user?->last_name,
+                    'email'       => $v->user?->email,
+                    'phone'       => $v->user?->phone,
                     'user_id' => $v->user_id,
                 ]
             ];
