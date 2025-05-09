@@ -1,58 +1,109 @@
 @extends('layouts.app')
+
+@section('title', 'Вход')
+
 @section('content')
-@vite(['src/app.js'])
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <title>Вход</title>
-</head>
-<body class="bg-gray-100">
+    <style>
+        .login-wrapper {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: #f3f4f6;
+        }
 
-<div class="container mx-auto px-4 py-12">
-    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
-        <div class="md:flex">
-            <div class="p-8">
-                <h2 class="text-xl font-bold mb-4">Вход в аккаунт</h2>
+        .login-box {
+            background: #ffffff;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+        }
 
-                @if ($errors->any())
-                    <div class="mb-4 text-red-500">
-                        <ul>
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
-                @endif
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+            color: #111827;
+        }
 
-                <form method="POST" action="{{ route('login.post') }}">
-                    @csrf
-                    <div class="mb-4">
-                        <label>Email</label>
-                        <input type="email" name="email" required class="border p-2 w-full">
-                    </div>
+        .login-box label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
 
-                    <div class="mb-4">
-                        <label>Пароль</label>
-                        <input type="password" name="password" required class="border p-2 w-full">
-                    </div>
+        .login-box input {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            box-sizing: border-box;
+        }
 
-                    <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">
-                        Войти
-                    </button>
-                </form>
+        .login-box button {
+            width: 100%;
+            padding: 0.6rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+        }
 
-                <div class="mt-4">
-                    <span>Нет аккаунта?</span>
-                    <a href="{{ route('register') }}" class="text-blue-500">Зарегистрироваться</a>
-                </div>
+        .login-box button:hover {
+            background-color: #1d4ed8;
+        }
 
+        .login-box .bottom-text {
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .login-box .bottom-text a {
+            color: #2563eb;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .login-box .bottom-text a:hover {
+            text-decoration: underline;
+        }
+
+        .login-error {
+            text-align: center;
+            color: red;
+            margin-bottom: 1rem;
+        }
+    </style>
+
+    <div class="login-wrapper">
+        <div class="login-box">
+            <h2>Вход в аккаунт</h2>
+
+            @if(session('error'))
+                <div class="login-error">{{ session('error') }}</div>
+            @endif
+
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+
+                <label for="email">Email</label>
+                <input id="email" type="email" name="email" required autofocus>
+
+                <label for="password">Пароль</label>
+                <input id="password" type="password" name="password" required>
+
+                <button type="submit">Войти</button>
+            </form>
+
+            <div class="bottom-text">
+                Нет аккаунта? <a href="{{ route('register') }}">Зарегистрироваться</a>
             </div>
         </div>
     </div>
-</div>
-</body>
-</html>
 @endsection
-
-

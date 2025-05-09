@@ -25,21 +25,29 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            'first_name' => 'required|string|max:255',
+            'last_name'  => 'required|string|max:255',
+            'middle_name'=> 'nullable|string|max:255',
+            'email'      => 'required|email|unique:users',
+            'phone'      => 'required|string|max:20',
+            'password'   => 'required|min:6',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'first_name' => $request->first_name,
+            'last_name'  => $request->last_name,
+            'middle_name'=> $request->middle_name,
+            'email'      => $request->email,
+            'phone'      => $request->phone,
+            'password'   => Hash::make($request->password),
+            'role'       => 'client', // можно по умолчанию
         ]);
 
         Auth::login($user);
 
         return redirect()->route('home');
     }
+
 
     public function login(Request $request)
     {

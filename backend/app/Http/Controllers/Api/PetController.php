@@ -8,17 +8,15 @@ use Illuminate\Http\Request;
 
 class PetController extends Controller
 {
-    /**
-     * Возвращает всех питомцев.
-     */
-    public function index(Request $request)
+    public function index()
     {
-        $pets = Pet::all();
+        $pets = Pet::with('client')->get();
 
         return response()->json([
             'data' => $pets
-        ], 200);
+        ]);
     }
+
 
     /**
      * Создает нового питомца.

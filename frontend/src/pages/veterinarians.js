@@ -9,11 +9,13 @@ export function initVets() {
     function loadVets() {
         axios.get('/api/veterinarians')
             .then(({ data }) => {
-                const html = (data.data || []).map(v => `
+                const html = (data.data || []).map(v => {
+                    const fullName = [v.last_name, v.first_name, v.middle_name]
+                        .filter(Boolean)
+                        .join(' ');
+                    return `
                     <tr data-id="${v.id}" class="bg-white border-b hover:bg-gray-50">
-                        <td class="px-4 py-2"><input disabled value="${v.last_name}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.first_name}" class="vet-input w-full border-none"></td>
-                        <td class="px-4 py-2"><input disabled value="${v.middle_name || ''}" class="vet-input w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="${fullName}" class="vet-input w-full border-none"></td>
                         <td class="px-4 py-2"><input disabled value="${v.specialization || ''}" class="vet-input w-full border-none"></td>
                         <td class="px-4 py-2"><input disabled value="${v.phone || ''}" class="vet-input w-full border-none"></td>
                         <td class="px-4 py-2"><input disabled value="${v.email || ''}" class="vet-input w-full border-none"></td>
@@ -21,7 +23,9 @@ export function initVets() {
                             <button class="edit-btn bg-blue-500 text-white px-2 rounded">Редактировать</button>
                             <button class="delete-btn bg-red-500 text-white px-2 rounded">Удалить</button>
                         </td>
-                    </tr>`).join('');
+                    </tr>`;
+                }).join('');
+
                 table.querySelector('tbody').innerHTML = html;
                 attachEvents();
             })

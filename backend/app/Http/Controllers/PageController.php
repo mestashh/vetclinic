@@ -59,7 +59,7 @@ class PageController extends Controller
     public function pets(Request $request)
     {
         $search = $request->input('search');
-        $query = Pet::with('user');
+        $query = Pet::with('client');
 
         if ($search) {
             $query->where('name', 'like', "%{$search}%");

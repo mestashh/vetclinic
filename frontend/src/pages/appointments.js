@@ -59,8 +59,10 @@ export function initAppointments() {
         const vetName = veterinarians.find(v => v.id === appt.veterinarian_id);
 
         const actions = isAdmin
-            ? `<button class="edit-btn bg-blue-500 text-white px-2 rounded">Изменить</button>
-               <button class="delete-btn bg-red-500 text-white px-2 rounded">Удалить</button>`
+            ? `
+                <button class="edit-btn btn-icon bg-blue-500 text-white rounded">✏️</button>
+                <button class="delete-btn btn-icon bg-red-500 text-white rounded">🗑️</button>
+              `
             : '';
 
         return `
