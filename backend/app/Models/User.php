@@ -40,4 +40,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Appointment::class);
     }
+    public function veterinarian()
+    {
+        return $this->hasOne(Veterinarian::class);
+    }
 }

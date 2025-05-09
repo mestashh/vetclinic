@@ -120,14 +120,17 @@ export function initAppointments() {
                 ? `<button class="save-btn btn-icon confirm">✅</button><button class="cancel-btn btn-icon cancel">❌</button>`
                 : `<button class="edit-btn btn-icon edit">✏️</button><button class="delete-btn btn-icon delete">🗑️</button>`)
             : '';
+        const statusCell = `<span>${appt?.status || '—'}</span>`;
 
         return `<tr ${idAttr} class="border-b ${isNew ? 'bg-gray-100' : ''}">
-            <td class="px-2 py-2">${userCell}</td>
-            <td class="px-2 py-2">${petCell}</td>
-            <td class="px-2 py-2">${vetCell}</td>
-            <td class="px-2 py-2">${dateCell}</td>
-            <td class="px-2 py-2 actions">${actions}</td>
-        </tr>`;
+    <td class="px-2 py-2">${userCell}</td>
+    <td class="px-2 py-2">${petCell}</td>
+    <td class="px-2 py-2">${vetCell}</td>
+    <td class="px-2 py-2">${dateCell}</td>
+    <td class="px-2 py-2">${statusCell}</td>
+    <td class="px-2 py-2 actions">${actions}</td>
+</tr>`;
+
     }
     async function loadAppointments() {
         try {

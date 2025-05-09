@@ -104,6 +104,7 @@
                 <th>Питомец</th>
                 <th>Ветеринар</th>
                 <th>Дата и время</th>
+                <th>Статус</th>
                 @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
                     <th>Действия</th>
                 @endif

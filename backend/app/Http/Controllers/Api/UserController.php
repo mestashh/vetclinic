@@ -13,13 +13,46 @@ class UserController extends Controller
     public function updateRole(Request $request, $id)
     {
         $request->validate([
-            'role' => 'required|in:client,vet,admin,superadmin'
+            'role' => 'required|in:client,vet,admin,superadmin',
         ]);
 
         $user = User::findOrFail($id);
-        $user->update(['role' => $request->role]);
+        $user->role = $request->role;
+        $user->save();
 
-        return response()->json(['message' => 'Роль успешно изменена']);
+        // Если новая роль — vet и записи в veterinarians ещё нет, создаём её
+        if ($user->role === 'vet' && !$user->veterinarian) {
+            \App\Models\Veterinarian::create([
+                'user_id' => $user->id,
+                'specialization' => 'Ветеринар',
+                'phone' => $user->phone,
+                'email' => $user->email,
+            ]);
+        }
+
+        return response()->json(['message' => 'Роль обновлена']);
+    }
+
+    public function veterinarians()
+    {
+        $vets = User::where('role', 'vet')->get();
+
+        $result = $vets->map(function ($user) {
+            return [
+                'id' => $user->id,
+                'specialization' => optional($user->veterinarian)->specialization ?? '',
+                'user' => [
+                    'first_name' => $user->first_name,
+                    'middle_name' => $user->middle_name,
+                    'last_name' => $user->last_name,
+                    'email' => $user->email,
+                    'phone' => $user->phone,
+                    'user_id' => $user->id,
+                ]
+            ];
+        });
+
+        return response()->json(['data' => $result]);
     }
 
 

@@ -98,11 +98,6 @@
 
     <div class="vets-wrapper">
         <h1>Ветеринары</h1>
-
-        <div class="top-btn">
-            <button id="addVetBtn">Добавить врача</button>
-        </div>
-
         <div class="overflow-x-auto">
             <table id="vetsTable">
                 <thead>

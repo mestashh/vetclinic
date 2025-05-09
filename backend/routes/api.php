@@ -12,15 +12,19 @@ use App\Http\Controllers\Api\ServiceItemController;
 
 
 
+
+Route::get('/veterinarians', [UserController::class, 'veterinarians']);
+Route::put('/users/{id}/role', [UserController::class, 'updateRole']);
+
+
+
+
+
+
+
+
 Route::apiResource('services.items', ServiceItemController::class)->shallow();
 Route::apiResource('items', ServiceItemController::class)->only(['update', 'destroy']);
-
-
-
-
-
-
-
 Route::put('/users/{user}/role', [UserController::class, 'updateRole']);
 Route::get('/news', [NewsController::class, 'index']);
 Route::post('/news', [NewsController::class, 'store']);
