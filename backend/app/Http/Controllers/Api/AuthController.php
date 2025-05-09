@@ -55,15 +55,23 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required'],
         ]);
-
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->route('home');
-        }
 
+            $role = Auth::user()->role;
+
+            return match ($role) {
+                'client'     => redirect()->route('my-appointments'),
+                'vet'        => redirect()->route('appointments'),
+                'admin'      => redirect()->route('users'),
+                'superadmin' => redirect()->route('users'),
+                default      => redirect()->route('home'),
+            };
+        }
         return back()->withErrors([
             'email' => 'Ошибка данных',
         ])->onlyInput('email');
+
     }
 
     // Вот этот метод должен быть именно таким

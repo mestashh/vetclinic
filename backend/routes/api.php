@@ -10,6 +10,10 @@ use App\Http\Controllers\Api\VeterinarianController;
 
 
 
+Route::get('/veterinarians/{veterinarian}/appointments/{date}', [AppointmentController::class, 'busySlots']);
+
+
+
 Route::get('/veterinarians/by-user/{user}', [VeterinarianController::class, 'byUser']);
 Route::get('/users/{user}/pets', [UserController::class, 'pets']);
 Route::get('/users', [UserController::class, 'index']);

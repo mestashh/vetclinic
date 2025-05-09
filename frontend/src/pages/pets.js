@@ -62,26 +62,43 @@ export function initPets() {
             btn.onclick = () => {
                 const row = btn.closest('tr');
                 const id = row.dataset.id;
-                row.querySelectorAll('input').forEach(i => i.disabled = false);
-                const cell = btn.closest('td');
-                cell.innerHTML = `
-                    <button class="update-btn btn-icon confirm-btn">✅</button>
-                    <button class="cancel-btn btn-icon cancel-btn">❌</button>
-                `;
+                const cells = row.querySelectorAll('td');
 
-                cell.querySelector('.update-btn').onclick = () => {
-                    const [name, species, breed, age, owner] =
-                        Array.from(row.querySelectorAll('input')).map(i => i.value);
+                cells[0].innerHTML = `<input value="${cells[0].querySelector('input').value}" class="edit-input w-full">`;
+                cells[1].innerHTML = `<input value="${cells[1].querySelector('input').value}" class="edit-input w-full">`;
+                cells[2].innerHTML = `<input value="${cells[2].querySelector('input').value}" class="edit-input w-full">`;
+                cells[3].innerHTML = `<input type="number" value="${cells[3].querySelector('input').value}" class="edit-input w-full">`;
 
-                    axios.put(`/api/animals/${id}`, { name, species, breed, age })
+                const currentOwner = cells[4].querySelector('input').value;
+                const userOptions = users.map(u => {
+                    const fullName = [u.last_name, u.first_name, u.middle_name].filter(Boolean).join(' ');
+                    const selected = fullName === currentOwner ? 'selected' : '';
+                    return `<option value="${u.id}" ${selected}>${fullName}</option>`;
+                }).join('');
+
+                cells[4].innerHTML = `<select class="edit-input w-full">${userOptions}</select>`;
+
+                cells[5].innerHTML = `
+                <button class="update-btn btn-icon confirm-btn">✅</button>
+                <button class="cancel-btn btn-icon cancel-btn">❌</button>
+            `;
+
+                cells[5].querySelector('.update-btn').onclick = () => {
+                    const name = cells[0].querySelector('input').value;
+                    const species = cells[1].querySelector('input').value;
+                    const breed = cells[2].querySelector('input').value;
+                    const age = cells[3].querySelector('input').value;
+                    const client_id = parseInt(cells[4].querySelector('select').value);  // ✅ Приводим к числу
+
+                    axios.put(`/api/animals/${id}`, { name, species, breed, age, client_id })
                         .then(() => loadPets())
                         .catch(() => showError("Ошибка при обновлении"));
                 };
-
-                cell.querySelector('.cancel-btn').onclick = () => loadPets();
+                cells[5].querySelector('.cancel-btn').onclick = () => loadPets();
             };
         });
     }
+
 
     function handleAdd() {
         const tr = document.createElement('tr');
@@ -92,33 +109,38 @@ export function initPets() {
         ).join('');
 
         tr.innerHTML = `
-            <td class="px-4 py-2"><input placeholder="Имя" class="new-input w-full" /></td>
-            <td class="px-4 py-2"><input placeholder="Вид" class="new-input w-full" /></td>
-            <td class="px-4 py-2"><input placeholder="Порода" class="new-input w-full" /></td>
-            <td class="px-4 py-2"><input type="number" placeholder="Возраст" class="new-input w-full" /></td>
-            <td class="px-4 py-2">
-                <select class="new-input w-full">
-                    <option value="">Выберите владельца</option>
-                    ${userOptions}
-                </select>
-            </td>
-            <td class="px-4 py-2 action-buttons">
-                <button class="save-btn btn-icon confirm-btn">✅</button>
-                <button class="cancel-btn btn-icon cancel-btn">❌</button>
-            </td>`;
+        <td class="px-4 py-2"><input placeholder="Имя" class="new-input w-full" /></td>
+        <td class="px-4 py-2"><input placeholder="Вид" class="new-input w-full" /></td>
+        <td class="px-4 py-2"><input placeholder="Порода" class="new-input w-full" /></td>
+        <td class="px-4 py-2"><input type="number" placeholder="Возраст" class="new-input w-full" /></td>
+        <td class="px-4 py-2">
+            <select class="new-input w-full">
+                <option value="">Выберите владельца</option>
+                ${userOptions}
+            </select>
+        </td>
+        <td class="px-4 py-2 action-buttons">
+            <button class="save-btn btn-icon confirm-btn">✅</button>
+            <button class="cancel-btn btn-icon cancel-btn">❌</button>
+        </td>`;
 
         table.prepend(tr);
 
         tr.querySelector('.save-btn').onclick = () => {
             const [name, species, breed, age, client_id] =
                 Array.from(tr.querySelectorAll('.new-input')).map(i => i.value);
+
             axios.post('/api/animals', { name, species, breed, age, client_id })
-                .then(() => loadPets())
+                .then(() => {
+                    loadPets();    // ✅ перезагрузка питомцев
+                    tr.remove();   // ✅ удаление строки добавления после успеха
+                })
                 .catch(() => showError("Ошибка при создании"));
         };
 
         tr.querySelector('.cancel-btn').onclick = () => tr.remove();
     }
+
 
     loadRefs().then(() => {
         addBtn.onclick = handleAdd;

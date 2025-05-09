@@ -12,11 +12,13 @@ Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
+Route::get('/news', [PageController::class, 'news'])->name('news');
 Route::get('/', function () {
     return view('home');
 })->name('home');
-Route::get('/my-appointments', [PageController::class, 'myAppointments'])->name('my-appointments');
+
 Route::middleware('auth')->group(function () {
+    Route::get('/my-appointments', [PageController::class, 'myAppointments'])->name('my-appointments');
     Route::get('/users', [PageController::class, 'users'])->name('users');
     Route::get('/veterinarians', [PageController::class, 'veterinarians'])->name('veterinarians');
     Route::get('/pets', [PageController::class, 'pets'])->name('pets');
@@ -24,8 +26,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/services', [PageController::class, 'services'])->name('services');
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/about', [PageController::class, 'aboutMe'])->name('about');
-
-    Route::get('/news', [PageController::class, 'news'])->name('news');
     Route::post('/profile/update', [PageController::class, 'updateProfileUser'])->name('profile.update');
     Route::post('/pets/store', [PageController::class, 'storePet'])->name('pets.store');
 

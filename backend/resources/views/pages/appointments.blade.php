@@ -5,7 +5,7 @@
 @section('content')
     <style>
         .appointments-wrapper {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 2rem auto;
             background: #fff;
             padding: 2rem;
@@ -36,64 +36,77 @@
         th {
             background-color: #f9fafb;
             color: #374151;
-            font-weight: 600;
         }
 
         tr:hover {
             background-color: #f3f4f6;
         }
 
+        .action-buttons {
+            display: flex;
+            gap: 0.4rem;
+            justify-content: center;
+        }
+
         .btn-icon {
-            padding: 0.3rem 0.6rem;
-            font-size: 0.875rem;
+            font-size: 0.8rem;
+            padding: 0.3rem 0.5rem;
             border: none;
             border-radius: 4px;
             color: white;
             cursor: pointer;
         }
 
-        .edit-btn {
-            background-color: #3b82f6;
+        .edit-btn { background-color: #3b82f6; }
+        .delete-btn { background-color: #ef4444; }
+        .confirm-btn { background-color: #10b981; }
+        .cancel-btn { background-color: #6b7280; }
+
+        .top-btn {
+            text-align: center;
+            margin-bottom: 1.5rem;
         }
 
-        .edit-btn:hover {
+        .top-btn button {
             background-color: #2563eb;
+            color: white;
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
         }
 
-        .delete-btn {
-            background-color: #ef4444;
-        }
-
-        .delete-btn:hover {
-            background-color: #dc2626;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
+        input[type="text"], input[type="number"], input[type="datetime-local"], select {
+            width: 100%;
+            padding: 0.4rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            background-color: #f9fafb;
         }
     </style>
 
     <div class="appointments-wrapper">
         <h1>Приёмы</h1>
-
-        <div class="overflow-x-auto">
-            <table id="appointmentsTable">
-                <thead>
-                <tr>
-                    <th>Клиент</th>
-                    <th>Питомец</th>
-                    <th>Ветеринар</th>
-                    <th>Дата и время</th>
-                    @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
-                        <th>Действия</th>
-                    @endif
-                </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
-        </div>
+        @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
+            <div class="top-btn">
+                <button id="addAppointmentBtn">Добавить приём</button>
+            </div>
+        @endif
+        <table id="appointmentsTable">
+            <thead>
+            <tr>
+                <th>Клиент</th>
+                <th>Питомец</th>
+                <th>Ветеринар</th>
+                <th>Дата и время</th>
+                @if(in_array(Auth::user()->role, ['admin', 'superadmin']))
+                    <th>Действия</th>
+                @endif
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
 @endsection
 

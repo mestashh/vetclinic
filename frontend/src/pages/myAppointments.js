@@ -1,3 +1,5 @@
+// resources/js/myappointments.js
+
 import axios from 'axios';
 
 export function initMyAppointments() {
@@ -38,27 +40,37 @@ export function initMyAppointments() {
         return new Date(t.getFullYear(), t.getMonth(), t.getDate(), SLOT_TIMES[0].h, SLOT_TIMES[0].m);
     }
 
-    // Теперь value = "HH:MM", selected по простому совпадению
-    function buildOptions(selectedTime) {
+    async function fetchBusySlots(veterinarian_id, date) {
+        if (!veterinarian_id || !date) return [];
+        try {
+            const res = await axios.get(`/api/veterinarians/${veterinarian_id}/appointments/${date}`);
+            return res.data.busy_slots;
+        } catch (e) {
+            console.error('Ошибка при получении занятых слотов:', e);
+            return [];
+        }
+    }
+
+    async function buildOptions(date, selectedTime, veterinarian_id) {
+        const busy_slots = await fetchBusySlots(veterinarian_id, date);
         return SLOT_TIMES.map(({ h, m }) => {
             const hh = String(h).padStart(2, '0');
             const mm = String(m).padStart(2, '0');
             const tv = `${hh}:${mm}`;
+            const disabled = busy_slots.includes(tv) ? ' disabled' : '';
             const sel = tv === selectedTime ? ' selected' : '';
-            return `<option value="${tv}"${sel}>${tv}</option>`;
+            return `<option value="${tv}"${disabled}${sel}>${tv}</option>`;
         }).join('');
     }
 
-    function makeRow(appt) {
+    async function makeRow(appt) {
         const isNew = !appt;
         const idAttr = isNew ? '' : `data-id="${appt.id}"`;
 
-        // --- разбираем время вручную ---
         let slot;
         if (isNew) {
             slot = getNextSlot();
         } else {
-            // "2025-05-09 11:30:00"
             const [datePart, timePart] = appt.scheduled_at.split(' ');
             const [Y, M, D] = datePart.split('-').map(Number);
             const [h, m] = timePart.split(':').map(Number);
@@ -74,89 +86,72 @@ export function initMyAppointments() {
         const dateVal = `${yyyy}-${mm}-${dd}`;
         const timeVal = `${hh}:${min}`;
         const minDate = getNextSlot().toISOString().slice(0, 10);
+        const veterinarian_id = appt?.veterinarian_id || '';
 
         const userCell = window.currentUserRole === 'client'
             ? `<input type="text" class="w-full border-none bg-gray-100" value="${window.currentUserName}" disabled>`
             : `<select class="user-select w-full border-none"${isNew ? '' : ' disabled'}>
-          <option value="">— клиент —</option>
-          ${users.map(u => `
-            <option value="${u.id}"${appt?.client_id === u.id ? ' selected' : ''}>
-              ${[u.last_name, u.first_name, u.middle_name].filter(Boolean).join(' ')}
-            </option>`).join('')}
+                <option value="">— клиент —</option>
+                ${users.map(u => `
+                    <option value="${u.id}"${appt?.client_id === u.id ? ' selected' : ''}>
+                        ${[u.last_name, u.first_name, u.middle_name].filter(Boolean).join(' ')}
+                    </option>`).join('')}
+            </select>`;
+
+        const petCell = `<select class="pet-select w-full border-none"${isNew ? '' : ' disabled'}><option value="">Загрузка...</option></select>`;
+
+        const vetCell = `<select class="vet-select w-full border-none"${isNew ? '' : ' disabled'}>
+            <option value="">— ветеринар —</option>
+            ${veterinarians.map(v => `
+                <option value="${v.id}"${v.id == veterinarian_id ? ' selected' : ''}>
+                    ${[v.last_name, v.first_name, v.middle_name].filter(Boolean).join(' ')}
+                </option>`).join('')}
         </select>`;
 
-        const petCell = `
-      <select class="pet-select w-full border-none"${isNew ? '' : ' disabled'}>
-        <option value="">Загрузка...</option>
-      </select>`;
-
-        const vetCell = `
-      <select class="vet-select w-full border-none"${isNew ? '' : ' disabled'}>
-        <option value="">— ветеринар —</option>
-        ${veterinarians.map(v => `
-          <option value="${v.id}"${appt?.veterinarian_id === v.id ? ' selected' : ''}>
-            ${[v.last_name, v.first_name, v.middle_name].filter(Boolean).join(' ')}
-          </option>`).join('')}
-      </select>`;
+        const timeOptions = await buildOptions(dateVal, timeVal, veterinarian_id);
 
         const dateCell = `
-      <input type="date" class="date-input w-full border-none"${isNew ? '' : ' disabled'}
-        value="${dateVal}" min="${minDate}">
-      <select class="time-select w-full border-none"${isNew ? '' : ' disabled'}>
-        ${buildOptions(timeVal)}
-      </select>`;
+            <input type="date" class="date-input w-full border-none"${isNew ? '' : ' disabled'} value="${dateVal}" min="${minDate}">
+            <select class="time-select w-full border-none"${isNew ? '' : ' disabled'}>${timeOptions}</select>`;
 
         const actions = isNew
-            ? `<button class="save-btn btn-icon confirm">✅</button>
-         <button class="cancel-btn btn-icon cancel">❌</button>`
-            : `<button class="edit-btn btn-icon edit">✏️</button>
-         <button class="delete-btn btn-icon delete">🗑️</button>`;
+            ? `<button class="save-btn btn-icon confirm">✅</button><button class="cancel-btn btn-icon cancel">❌</button>`
+            : `<button class="edit-btn btn-icon edit">✏️</button><button class="delete-btn btn-icon delete">🗑️</button>`;
 
-        return `
-      <tr ${idAttr} class="border-b ${isNew ? 'bg-gray-100' : ''}">
-        <td class="px-4 py-2">${userCell}</td>
-        <td class="px-4 py-2">${petCell}</td>
-        <td class="px-4 py-2">${vetCell}</td>
-        <td class="px-4 py-2">${dateCell}</td>
-        <td class="px-4 py-2 actions">${actions}</td>
-      </tr>`;
+        return `<tr ${idAttr} class="border-b ${isNew ? 'bg-gray-100' : ''}">
+            <td class="px-4 py-2">${userCell}</td>
+            <td class="px-4 py-2">${petCell}</td>
+            <td class="px-4 py-2">${vetCell}</td>
+            <td class="px-4 py-2">${dateCell}</td>
+            <td class="px-4 py-2 actions">${actions}</td>
+        </tr>`;
     }
 
-    function loadAppointments() {
-        axios.get('/api/appointments')
-            .then(({ data }) => {
-                let arr = Array.isArray(data) ? data : (data.data || []);
-                if (window.currentUserRole === 'client') {
-                    arr = arr.filter(a => a.client_id === window.currentUserId);
-                }
-                tableBody.innerHTML = arr.map(makeRow).join('');
-
-                // загрузить питомцев для каждого
-                arr.forEach(appt => {
-                    const row = tableBody.querySelector(`tr[data-id="${appt.id}"]`);
-                    axios.get(`/api/users/${appt.client_id}/pets`)
-                        .then(res => {
-                            row.querySelector('.pet-select').innerHTML =
-                                res.data.data.map(p =>
-                                    `<option value="${p.id}"${appt.pet_id === p.id ? ' selected' : ''}>
-                     ${p.name}
-                   </option>`
-                                ).join('');
-                        });
+    async function loadAppointments() {
+        const { data } = await axios.get('/api/appointments');
+        let arr = Array.isArray(data) ? data : (data.data || []);
+        if (window.currentUserRole === 'client') {
+            arr = arr.filter(a => a.client_id === window.currentUserId);
+        }
+        tableBody.innerHTML = (await Promise.all(arr.map(makeRow))).join('');
+        arr.forEach(appt => {
+            const row = tableBody.querySelector(`tr[data-id="${appt.id}"]`);
+            axios.get(`/api/users/${appt.client_id}/pets`)
+                .then(res => {
+                    row.querySelector('.pet-select').innerHTML = res.data.data.map(p =>
+                        `<option value="${p.id}"${appt.pet_id === p.id ? ' selected' : ''}>${p.name}</option>`
+                    ).join('');
                 });
-            })
-            .catch(e => alert('Ошибка загрузки: ' + e));
+        });
     }
 
-    tableBody.addEventListener('click', event => {
+    tableBody.addEventListener('click', async event => {
         const row = event.target.closest('tr');
         const id = row?.dataset.id;
         const btn = event.target;
 
         if (btn.classList.contains('save-btn') || btn.classList.contains('update-btn')) {
-            const clientId = window.currentUserRole === 'client'
-                ? window.currentUserId
-                : row.querySelector('.user-select').value;
+            const clientId = window.currentUserRole === 'client' ? window.currentUserId : row.querySelector('.user-select').value;
             const date = row.querySelector('.date-input').value;
             const time = row.querySelector('.time-select').value;
             const payload = {
@@ -171,34 +166,39 @@ export function initMyAppointments() {
         }
 
         if (btn.classList.contains('edit-btn')) {
-            row.querySelectorAll('.pet-select, .vet-select, .date-input, .time-select')
-                .forEach(el => el.disabled = false);
-            row.querySelector('.actions').innerHTML = `
-        <button class="update-btn btn-icon confirm">✅</button>
-        <button class="cancel-btn btn-icon cancel">❌</button>`;
+            row.querySelectorAll('.pet-select, .vet-select, .date-input, .time-select').forEach(el => el.disabled = false);
+            row.querySelector('.actions').innerHTML = `<button class="update-btn btn-icon confirm">✅</button><button class="cancel-btn btn-icon cancel">❌</button>`;
         }
 
         if (btn.classList.contains('cancel-btn')) return loadAppointments();
+        if (btn.classList.contains('delete-btn')) return axios.delete(`/api/appointments/${id}`).then(loadAppointments);
+    });
 
-        if (btn.classList.contains('delete-btn')) {
-            return axios.delete(`/api/appointments/${id}`)
-                .then(loadAppointments);
-        }
+    tableBody.addEventListener('change', async event => {
+        const row = event.target.closest('tr');
+        if (!row) return;
 
-        if (event.target.classList.contains('date-input')) {
-            const dateVal = event.target.value;
-            row.querySelector('.time-select').innerHTML = buildOptions('');
+        const dateInput = row.querySelector('.date-input');
+        const timeSelect = row.querySelector('.time-select');
+        const vetSelect = row.querySelector('.vet-select');
+
+        const dateVal = dateInput?.value;
+        const vetId = vetSelect?.value;
+
+        if (dateVal && vetId) {
+            const timeOptions = await buildOptions(dateVal, '', vetId);
+            timeSelect.innerHTML = timeOptions;
         }
     });
 
-    addBtn.onclick = () => {
-        tableBody.insertAdjacentHTML('afterbegin', makeRow(null));
-        // и сразу загрузить питомцев
+    addBtn.onclick = async () => {
+        const html = await makeRow(null);
+        tableBody.insertAdjacentHTML('afterbegin', html);
         const row = tableBody.querySelector('tr');
+        const petSelect = row.querySelector('.pet-select');
         axios.get(`/api/users/${window.currentUserId}/pets`)
             .then(res => {
-                row.querySelector('.pet-select').innerHTML =
-                    res.data.data.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+                petSelect.innerHTML = res.data.data.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
             });
     };
 

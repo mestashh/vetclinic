@@ -4,9 +4,12 @@
     <div style="display:flex; justify-content:space-between; align-items:center;">
         {{-- Левый блок: ссылки --}}
         <ul style="display:flex; flex-direction:row; gap:1rem; list-style:none; margin:0; padding:0;">
+            @guest
+                <a href="{{ route('home') }}" class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Главная</a>
+                <a href="{{ route('news') }}" class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Новости клиники</a>
+            @endguest
             @auth
                 @if(Auth::user()->role == 'client')
-                    <li><a href="{{ url('/') }}"                  class="text-white hover:text-gray-300">Главная</a></li>
                     <li><a href="{{ route('about') }}"            class="text-white hover:text-gray-300">Обо мне</a></li>
                     <li><a href="{{ route('my-appointments') }}"  class="text-white hover:text-gray-300">Мои записи</a></li>
                     <li><a href="{{ route('news') }}"             class="text-white hover:text-gray-300">Новости клиники</a></li>
@@ -24,7 +27,6 @@
                 @endif
 
                 @if(Auth::user()->role == 'superadmin')
-                    <li><a href="{{ url('/') }}"                  class="text-white hover:text-gray-300">Главная</a></li>
                     <li><a href="{{ route('users') }}"            class="text-white hover:text-gray-300">Клиенты</a></li>
                     <li><a href="{{ route('pets') }}"             class="text-white hover:text-gray-300">Питомцы</a></li>
                     <li><a href="{{ route('appointments') }}"     class="text-white hover:text-gray-300">Приёмы</a></li>

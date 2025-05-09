@@ -48,6 +48,7 @@ class PetController extends Controller
             'species' => 'required|string|max:255',
             'breed' => 'nullable|string|max:255',
             'age' => 'nullable|integer|min:0',
+            'client_id' => 'required|integer|exists:users,id',
         ]);
 
         $pet->update($validated);

@@ -47,4 +47,15 @@ class AppointmentController extends Controller
         return response()->json(['message' => 'Запись удалена успешно']);
     }
 
+    public function busySlots($veterinarian_id, $date)
+    {
+        $appointments = Appointment::where('veterinarian_id', $veterinarian_id)
+            ->whereDate('scheduled_at', $date)
+            ->pluck('scheduled_at')
+            ->map(fn($slot) => (new \DateTime($slot))->format('H:i'))
+            ->toArray();
+
+        return response()->json(['busy_slots' => $appointments]);
+    }
+
 }
