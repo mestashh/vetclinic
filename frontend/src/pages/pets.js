@@ -36,6 +36,8 @@ export function initPets() {
                             <td class="px-4 py-2"><input disabled value="${p.age || ''}" class="w-full border-none"></td>
                             <td class="px-4 py-2"><input disabled value="${userName}" class="w-full border-none"></td>
                             <td class="px-4 py-2 action-buttons">
+                            <a href="/pet-history/${p.id}" class="icon-button" title="История питомца"
+           style="background-color:#0ea5e9; color:white; padding:0.3rem; border-radius:4px; width:32px; text-align:center;">🩺</a>
                                 <button class="edit-btn btn-icon">✏️</button>
                                 <button class="delete-btn btn-icon">🗑️</button>
                             </td>

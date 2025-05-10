@@ -95,11 +95,17 @@ export function initAbout() {
                         <td><input disabled value="${p.breed || ''}" class="pet-input w-full border-none"/></td>
                         <td><input disabled value="${p.age || ''}" class="pet-input w-full border-none"/></td>
                         <td>
-                            <div class="pet-buttons">
-                                <button class="edit-pet-btn icon-button icon-edit">✏️</button>
-                                <button class="delete-pet-btn icon-button icon-delete">🗑️</button>
-                            </div>
-                        </td>
+    <div class="pet-buttons" style="display: flex; gap: 0.25rem; flex-wrap: nowrap;">
+        <a href="/pet-history/${p.id}" class="icon-button" title="История питомца"
+           style="background-color:#0ea5e9; color:white; padding:0.3rem; border-radius:4px; width:32px; text-align:center;">🩺</a>
+        <button class="edit-pet-btn icon-button icon-edit"
+                style="background-color:#3b82f6; color:white; padding:0.3rem; border-radius:4px; width:32px;">✏️</button>
+        <button class="delete-pet-btn icon-button icon-delete"
+                style="background-color:#ef4444; color:white; padding:0.3rem; border-radius:4px; width:32px;">🗑️</button>
+    </div>
+</td>
+
+
                     </tr>
                 `).join('');
 

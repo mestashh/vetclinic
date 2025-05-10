@@ -13,12 +13,31 @@
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
             font-family: sans-serif;
         }
+
+        .pet-info, .appointments {
+            margin-top: 1.5rem;
+        }
+
+        .appointment {
+            margin-bottom: 1rem;
+            background: #f9fafb;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .appointment h4 {
+            margin-bottom: 0.5rem;
+        }
     </style>
 
     <div class="pet-history-wrapper">
         <h1>История болезней</h1>
-        <p id="helloText">Привет, мир!</p>
-        <p><strong>ID питомца:</strong> <span id="petId">{{ $id }}</span></p>
+        <div id="petInfo" class="pet-info">
+            <p>Загрузка...</p>
+        </div>
+
+        <div id="appointments" class="appointments"></div>
     </div>
 @endsection
 
