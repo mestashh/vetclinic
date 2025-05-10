@@ -22,15 +22,23 @@ class OrderController extends Controller
             'price' => 'required|numeric|min:0'
         ]);
 
-        $order = Order::create([
+        $order = \App\Models\Order::create([
             'service_item_id' => $data['service_item_id'],
-            'quantity' => $data['quantity'],
-            'comment' => $data['comment'] ?? null,
-            'price' => $data['price']
+            'quantity'        => $data['quantity'],
+            'comment'         => $data['comment'] ?? null,
+            'price'           => $data['price']
         ]);
 
-        return response()->json(['message' => 'Заявка создана', 'order' => $order], 201);
+
+        \App\Models\ServiceItem::where('id', $data['service_item_id'])
+            ->increment('quantity', $data['quantity']);
+
+        return response()->json([
+            'message' => 'Заявка создана и количество обновлено',
+            'order' => $order
+        ], 201);
     }
+
 
 
 

@@ -38,6 +38,7 @@
         .appointment-details p {
             margin-bottom: 0.5rem;
         }
+
         .toggle-btn {
             background: none;
             border: none;
@@ -52,11 +53,10 @@
             transform: translateY(1px);
             width: auto;
         }
+
         .toggle-btn:hover {
             color: #2563eb;
         }
-
-
     </style>
 
     <div class="appointment-selector">

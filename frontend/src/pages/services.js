@@ -8,8 +8,6 @@ export function initServices() {
     const isClient = window.currentUserRole === 'client';
     let services = [];
 
-    const LOW_STOCK_THRESHOLD = 10;
-
     function showError(msg) {
         alert(msg);
         console.error(msg);
@@ -61,29 +59,44 @@ export function initServices() {
                 <td colspan="4">
                     <ul style="padding-left: 1rem; margin-top: 0.5rem;">
                         ${(service.items || []).map(item => {
-                    const lowStock = item.quantity < LOW_STOCK_THRESHOLD;
+                    const lowStock = item.quantity < 100;
                     return `
-                            <li data-item-id="${item.id}" style="margin-bottom: 0.5rem;">
+                            <li data-item-id="${item.id}" style="margin-bottom: 0.5rem; ${lowStock ? 'color:red;' : ''}">
                                 <span class="item-content">
                                     <strong>${item.name}</strong> — ${item.price}₽ 
                                     ${!isClient ? `(${item.quantity} шт.)` : ''}
-                                    ${lowStock ? '<span style="color:red;">🚨 Мало на складе</span>' : ''}
                                     ${item.description ? ` — ${item.description}` : ''}
                                 </span>
-                                ${lowStock ? `
-                                    <button class="order-btn btn-icon confirm-btn" style="margin-left:1rem;">📦 Заявка</button>
-                                ` : ''}
                                 ${isSuperAdmin ? `
                                 <span class="variant-buttons" style="margin-left: 1rem;">
                                     <button class="edit-variant btn-icon edit-btn">✏️</button>
                                     <button class="delete-variant btn-icon cancel-btn">🗑️</button>
                                 </span>` : ''}
                             </li>
-                        `}).join('') || '<em>Нет вариантов</em>'}
+                        `;
+                }).join('') || '<em>Нет вариантов</em>'}
                     </ul>
                 </td>
             `;
                 row.after(variantRow);
+
+                // Обработка кнопки "Заявка"
+                variantRow.querySelectorAll('.order-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        const li = btn.closest('li');
+                        const id = li.dataset.itemId;
+
+                        axios.post('/api/orders', {
+                            item_id: id,
+                            quantity: 10,
+                            comment: ''
+                        }).then(() => {
+                            window.location.href = 'http://localhost:8080/orders';
+                        }).catch(() => {
+                            showError('Ошибка при создании заявки');
+                        });
+                    };
+                });
 
                 if (isSuperAdmin) {
                     variantRow.querySelectorAll('.edit-variant').forEach(editBtn => {
@@ -114,8 +127,7 @@ export function initServices() {
 
                                 axios.put(`/api/items/${id}`, {
                                     name, price, quantity, description
-                                })
-                                    .then(() => loadServices())
+                                }).then(() => loadServices())
                                     .catch(() => showError('Ошибка при обновлении варианта'));
                             };
                         };
@@ -133,30 +145,6 @@ export function initServices() {
                         };
                     });
                 }
-
-                // Заявка
-                variantRow.querySelectorAll('.order-btn').forEach(btn => {
-                    btn.onclick = () => {
-                        const li = btn.closest('li');
-                        const id = li.dataset.itemId;
-                        const comment = prompt('Комментарий к заявке (необязательно):');
-                        const quantity = prompt('Сколько заказать?', '10');
-                        if (!quantity || isNaN(quantity) || quantity <= 0) {
-                            alert('Неверное количество');
-                            return;
-                        }
-
-                        axios.post('/api/orders', {
-                            item_id: id,
-                            quantity: quantity,
-                            comment
-                        }).then(() => {
-                            alert('Заявка отправлена!');
-                        }).catch(() => {
-                            showError('Ошибка при создании заявки');
-                        });
-                    };
-                });
             };
         });
     }
@@ -165,7 +153,9 @@ export function initServices() {
         table.querySelectorAll('.delete-btn').forEach(btn => {
             btn.onclick = () => {
                 const id = btn.closest('tr').dataset.id;
-                axios.delete(`/api/services/${id}`).then(loadServices).catch(() => showError('Ошибка при удалении'));
+                axios.delete(`/api/services/${id}`)
+                    .then(loadServices)
+                    .catch(() => showError('Ошибка при удалении'));
             };
         });
 
@@ -210,8 +200,7 @@ export function initServices() {
 
                     axios.post(`/api/services/${serviceId}/items`, {
                         name, price, quantity, description
-                    })
-                        .then(() => loadServices())
+                    }).then(() => loadServices())
                         .catch(() => showError('Ошибка при добавлении варианта'));
                 };
             };
@@ -243,8 +232,7 @@ export function initServices() {
                     axios.put(`/api/services/${id}`, {
                         name: newName,
                         description: newDesc
-                    })
-                        .then(() => loadServices())
+                    }).then(() => loadServices())
                         .catch(() => showError('Ошибка при обновлении услуги'));
                 };
 

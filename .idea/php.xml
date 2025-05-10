@@ -124,8 +124,6 @@
       <path value="$PROJECT_DIR$/backend/vendor/theseer/tokenizer" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/var-dumper" />
       <path value="$PROJECT_DIR$/backend/vendor/symfony/yaml" />
-      <path value="$PROJECT_DIR$/backend/vendor/barryvdh/laravel-debugbar" />
-      <path value="$PROJECT_DIR$/backend/vendor/php-debugbar/php-debugbar" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

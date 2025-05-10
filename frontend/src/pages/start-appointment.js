@@ -8,8 +8,6 @@ export function initStartAppointment() {
     let allServices = [];
 
     async function loadAppointments() {
-        console.log('[DEBUG] Загружаем приёмы...');
-
         try {
             const [resAppts, resServices] = await Promise.all([
                 axios.get('/api/appointments'),
@@ -19,16 +17,9 @@ export function initStartAppointment() {
             appointments = resAppts.data.filter(a => {
                 const isMatch = a.veterinarian?.user_id == window.currentUserId;
                 const isScheduled = a.status === 'scheduled';
-
                 const today = new Date();
                 const apptDate = new Date(a.scheduled_at);
-
-                const isToday =
-                    apptDate.getFullYear() === today.getFullYear() &&
-                    apptDate.getMonth() === today.getMonth() &&
-                    apptDate.getDate() === today.getDate();
-
-                return isMatch && isScheduled && isToday;
+                return isMatch && isScheduled && apptDate.toDateString() === today.toDateString();
             });
 
             allServices = resServices.data.data || [];
@@ -39,7 +30,6 @@ export function initStartAppointment() {
                 return `<option value="${appt.id}">${client.trim()} — ${date}</option>`;
             }).join('');
         } catch (err) {
-            console.error('[DEBUG] Ошибка загрузки:', err);
             alert('Ошибка загрузки приёмов или услуг');
         }
     }
@@ -56,44 +46,31 @@ export function initStartAppointment() {
         if (!appt) return;
 
         const date = new Date(appt.scheduled_at).toLocaleString();
-        const client = appt.user ? `${appt.user.last_name} ${appt.user.first_name}` : 'неизвестно';
+        const client = `${appt.user?.last_name} ${appt.user?.first_name}`;
         const petName = appt.pet?.name || '—';
-        const petLink = appt.pet
-            ? `<a href="/pet-history/${appt.pet.id}" style="color:#2563eb; text-decoration:underline;" target="_blank">${petName}</a>`
-            : '—';
-        const selectedServiceIds = appt.services?.map(s => s.id) || [];
+        const petLink = appt.pet ? `<a href="/pet-history/${appt.pet.id}" style="color:#2563eb;" target="_blank">${petName}</a>` : '—';
 
         const serviceCheckboxes = allServices.map(service => {
             const items = (service.items || []).map(item => {
-                const isChecked = appt.services?.some(s =>
-                    s.items?.some(si => si.id === item.id)
-                );
+                const isChecked = appt.services?.some(s => s.items?.some(si => si.id === item.id));
                 return `
-            <div class="service-item" style="margin-left: 1.5rem; margin-top: 0.3rem;">
-                <label>
-                    <input type="checkbox" class="service-item-checkbox" value="${item.id}" ${isChecked ? 'checked' : ''}>
-                    <strong>${item.name}</strong> — ${item.price}₽ ${item.description ? `— ${item.description}` : ''}
-                </label>
-            </div>
-        `;
+                    <div class="service-item" style="margin-left: 1.5rem;">
+                        <label>
+                            <input type="checkbox" class="service-item-checkbox" value="${item.id}" ${isChecked ? 'checked' : ''}>
+                            <strong>${item.name}</strong> — ${item.price}₽ ${item.description ? `— ${item.description}` : ''}
+                        </label>
+                    </div>`;
             }).join('');
 
-            const blockId = `block-${service.id}`;
-
             return `
-        <div class="service-block" style="margin-top: 1rem;">
-            <div style="display: flex; align-items: center; gap: 0.5rem;">
-                <button class="toggle-btn" data-target="${blockId}" aria-expanded="false">▶️</button>
-                <span style="font-weight: bold;">${service.name}</span>
-            </div>
-            <div id="${blockId}" class="service-items" style="display:none;">
-                ${items || '<em>Нет вариантов</em>'}
-            </div>
-        </div>
-    `;
+                <div class="service-block" style="margin-top: 1rem;">
+                    <div style="display:flex; align-items:center; gap:0.5rem;">
+                        <button class="toggle-btn" data-target="block-${service.id}">▶️</button>
+                        <span><strong>${service.name}</strong></span>
+                    </div>
+                    <div id="block-${service.id}" class="service-items" style="display:none;">${items || '<em>Нет вариантов</em>'}</div>
+                </div>`;
         }).join('');
-
-
 
         info.innerHTML = `
             <p><strong>Дата:</strong> ${date}</p>
@@ -102,33 +79,35 @@ export function initStartAppointment() {
             <p><strong>Питомец:</strong> ${petLink}</p>
             <p><strong>Статус:</strong> ${translateStatus(appt.status)}</p>
 
-            <div style="margin-top: 1rem;">
+            <div style="margin-top:1rem;">
                 <strong>Выберите оказанные услуги:</strong>
                 ${serviceCheckboxes}
             </div>
 
-            <div style="margin-top: 1rem;">
+            <div style="margin-top:1rem;">
                 <label for="comment"><strong>Комментарий:</strong></label>
                 <textarea id="comment" rows="3" style="width:100%; margin-top:0.5rem;"></textarea>
             </div>
 
-            <p id="totalCost" style="margin-top: 1rem;"><strong>Сумма:</strong> 0₽</p>
+            <p id="totalCost" style="margin-top:1rem;"><strong>Сумма:</strong> 0₽</p>
 
-            <button id="completeBtn" style="margin-top: 1rem; background:#10b981;">Завершить приём</button>
+            <button id="completeBtn" style="background:#10b981; margin-top:1rem;">Завершить приём</button>
+
+            <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                <button id="printReceiptBtn" style="background:#3b82f6;">🧾 Печать квитанции</button>
+                <button id="printContractBtn" style="background:#9333ea;">📄 Печать договора</button>
+            </div>
         `;
 
         info.style.display = 'block';
-
         calculateTotal();
 
         document.querySelectorAll('.service-item-checkbox').forEach(cb => {
             cb.addEventListener('change', calculateTotal);
         });
 
-
         document.getElementById('completeBtn').onclick = async () => {
-            const selectedItemIds = Array.from(document.querySelectorAll('.service-item-checkbox:checked'))
-                .map(cb => parseInt(cb.value));
+            const selectedItemIds = Array.from(document.querySelectorAll('.service-item-checkbox:checked')).map(cb => parseInt(cb.value));
             const comment = document.getElementById('comment').value;
 
             try {
@@ -137,12 +116,25 @@ export function initStartAppointment() {
                     comment
                 });
                 alert('Приём завершён!');
-                loadAppointments(); // перезагрузим список
+                loadAppointments();
             } catch (err) {
-                console.error(err);
                 alert('Ошибка при завершении приёма');
             }
         };
+
+        document.getElementById('printReceiptBtn').onclick = () => printReceipt(appt);
+        document.getElementById('printContractBtn').onclick = () => printContract(appt);
+
+        document.querySelectorAll('.toggle-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.dataset.target;
+                const block = document.getElementById(targetId);
+                if (!block) return;
+                const isVisible = block.style.display === 'block';
+                block.style.display = isVisible ? 'none' : 'block';
+                btn.textContent = isVisible ? '▶️' : '▼';
+            });
+        });
 
         function calculateTotal() {
             let total = 0;
@@ -155,16 +147,67 @@ export function initStartAppointment() {
             });
             document.getElementById('totalCost').innerHTML = `<strong>Сумма:</strong> ${total.toFixed(2)}₽`;
         }
-        document.querySelectorAll('.toggle-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const targetId = btn.dataset.target;
-                const block = document.getElementById(targetId);
-                if (!block) return;
-                const isVisible = block.style.display === 'block';
-                block.style.display = isVisible ? 'none' : 'block';
-                btn.textContent = isVisible ? '▶️' : '▼';
-            });
-        });
+
+        function printReceipt(appt) {
+            const items = Array.from(document.querySelectorAll('.service-item-checkbox:checked')).map(cb => {
+                const id = parseInt(cb.value);
+                for (const service of allServices) {
+                    const item = (service.items || []).find(i => i.id === id);
+                    if (item) return `${item.name} — ${item.price}₽`;
+                }
+                return null;
+            }).filter(Boolean);
+
+            const total = document.getElementById('totalCost')?.innerText || '';
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html>
+                    <head><title>Квитанция</title></head>
+                    <body>
+                        <h2>Квитанция об оплате</h2>
+                        <p><strong>Дата:</strong> ${new Date(appt.scheduled_at).toLocaleString()}</p>
+                        <p><strong>Клиент:</strong> ${appt.user?.last_name} ${appt.user?.first_name}</p>
+                        <p><strong>Питомец:</strong> ${appt.pet?.name}</p>
+                        <h3>Оказанные услуги:</h3>
+                        <ul>${items.map(i => `<li>${i}</li>`).join('')}</ul>
+                        <p><strong>${total}</strong></p>
+                        <br><br>
+                        <p>Подпись: ______________________</p>
+                        <script>window.print()</script>
+                    </body>
+                </html>
+            `);
+            win.document.close();
+        }
+
+        function printContract(appt) {
+            const fullName = `${appt.user?.last_name} ${appt.user?.first_name}`;
+            const petName = appt.pet?.name || '';
+            const date = new Date(appt.scheduled_at).toLocaleDateString();
+            const comment = document.getElementById('comment')?.value || '';
+
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <html>
+                    <head><title>Договор</title></head>
+                    <body>
+                        <h2>Договор на оказание ветеринарных услуг</h2>
+                        <p>г. Москва &nbsp;&nbsp;&nbsp; Дата: ${date}</p>
+                        <p>Клиент: <strong>${fullName}</strong></p>
+                        <p>Питомец: <strong>${petName}</strong></p>
+                        <p>Настоящим подтверждается согласие на оказание ветеринарных услуг в рамках приёма, запланированного на ${date}.</p>
+                        <p>Стороны подтверждают, что информация о питомце предоставлена клиентом добровольно и достоверно.</p>
+                        <p><strong>Комментарий:</strong> ${comment}</p>
+                        <br><br>
+                        <p>Клиент: _______________________</p>
+                        <p>Ветеринар: ____________________</p>
+                        <script>window.print()</script>
+                    </body>
+                </html>
+            `);
+            win.document.close();
+        }
     });
 
     function translateStatus(status) {
