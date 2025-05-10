@@ -10,16 +10,20 @@ use App\Http\Controllers\PageController;
 
 
 
+
+Route::view('/orders', 'pages.orders')->name('orders');
+
+
+
+
+
+
+
+
 Route::get('/my-past-appointments', [PageController::class, 'pastAppointments'])->name('my-past-appointments');
 Route::get('/pet-history/{id}', function ($id) {
     return view('pages.pet-history', compact('id'));
 })->name('pet-history');
-
-
-
-
-
-
 Route::get('/appointments/start/{appointment}', [PageController::class, 'startAppointment'])->name('appointments.start');
 Route::get('/appointments/start', [PageController::class, 'selectAppointment'])->name('appointments.select');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');

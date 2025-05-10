@@ -30,5 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         import('./pages/pastAppointments.js').then(m => m.initPastAppointments());
     } else if (p.startsWith('/pet-history/')) {
         import('./pages/petHistory').then(m => m.initPetHistory());
+    }else if (p.startsWith('/orders')) {
+        import('./pages/orders').then(m => m.initOrdersPage());
     }
 });

@@ -8,6 +8,8 @@ export function initServices() {
     const isClient = window.currentUserRole === 'client';
     let services = [];
 
+    const LOW_STOCK_THRESHOLD = 10;
+
     function showError(msg) {
         alert(msg);
         console.error(msg);
@@ -58,23 +60,29 @@ export function initServices() {
                 variantRow.innerHTML = `
                 <td colspan="4">
                     <ul style="padding-left: 1rem; margin-top: 0.5rem;">
-                        ${(service.items || []).map(item => `
+                        ${(service.items || []).map(item => {
+                    const lowStock = item.quantity < LOW_STOCK_THRESHOLD;
+                    return `
                             <li data-item-id="${item.id}" style="margin-bottom: 0.5rem;">
                                 <span class="item-content">
-    <strong>${item.name}</strong> — ${item.price}₽ 
-    ${!isClient ? `(${item.quantity} шт.)` : ''}
-    ${item.description ? `&nbsp;— ${item.description}` : ''}
-</span>
+                                    <strong>${item.name}</strong> — ${item.price}₽ 
+                                    ${!isClient ? `(${item.quantity} шт.)` : ''}
+                                    ${lowStock ? '<span style="color:red;">🚨 Мало на складе</span>' : ''}
+                                    ${item.description ? ` — ${item.description}` : ''}
+                                </span>
+                                ${lowStock ? `
+                                    <button class="order-btn btn-icon confirm-btn" style="margin-left:1rem;">📦 Заявка</button>
+                                ` : ''}
                                 ${isSuperAdmin ? `
                                 <span class="variant-buttons" style="margin-left: 1rem;">
                                     <button class="edit-variant btn-icon edit-btn">✏️</button>
                                     <button class="delete-variant btn-icon cancel-btn">🗑️</button>
                                 </span>` : ''}
                             </li>
-                        `).join('') || '<em>Нет вариантов</em>'}
+                        `}).join('') || '<em>Нет вариантов</em>'}
                     </ul>
                 </td>
-                `;
+            `;
                 row.after(variantRow);
 
                 if (isSuperAdmin) {
@@ -125,6 +133,30 @@ export function initServices() {
                         };
                     });
                 }
+
+                // Заявка
+                variantRow.querySelectorAll('.order-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        const li = btn.closest('li');
+                        const id = li.dataset.itemId;
+                        const comment = prompt('Комментарий к заявке (необязательно):');
+                        const quantity = prompt('Сколько заказать?', '10');
+                        if (!quantity || isNaN(quantity) || quantity <= 0) {
+                            alert('Неверное количество');
+                            return;
+                        }
+
+                        axios.post('/api/orders', {
+                            item_id: id,
+                            quantity: quantity,
+                            comment
+                        }).then(() => {
+                            alert('Заявка отправлена!');
+                        }).catch(() => {
+                            showError('Ошибка при создании заявки');
+                        });
+                    };
+                });
             };
         });
     }

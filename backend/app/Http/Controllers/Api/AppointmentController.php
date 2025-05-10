@@ -82,6 +82,7 @@ class AppointmentController extends Controller
 
         return response()->json($appointment, 201);
     }
+
     public function update(Request $request, Appointment $appointment)
     {
         $data = $request->validate([
@@ -96,6 +97,7 @@ class AppointmentController extends Controller
 
         return response()->json($appointment);
     }
+
     public function destroy(Appointment $appointment)
     {
         $appointment->delete();

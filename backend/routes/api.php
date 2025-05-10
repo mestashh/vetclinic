@@ -9,8 +9,16 @@ use App\Http\Controllers\Api\ServiceController;
 use App\Http\Controllers\Api\VeterinarianController;
 use App\Http\Controllers\Api\NewsController;
 use App\Http\Controllers\Api\ServiceItemController;
+use App\Http\Controllers\Api\OrderController;
 
 
+
+
+
+
+Route::get('/orders', [OrderController::class, 'index']);
+Route::post('/orders', [OrderController::class, 'store']);
+Route::delete('/orders/{order}', [OrderController::class, 'destroy']);
 
 
 

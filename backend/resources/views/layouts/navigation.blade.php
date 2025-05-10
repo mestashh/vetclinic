@@ -37,6 +37,7 @@
                     <li><a href="{{ route('appointments') }}"     class="text-white hover:text-gray-300">Приёмы</a></li>
                     <li><a href="{{ route('veterinarians') }}"    class="text-white hover:text-gray-300">Ветеринары</a></li>
                     <li><a href="{{ route('services') }}"         class="text-white hover:text-gray-300">Услуги</a></li>
+                    <li><a href="{{ route('orders') }}"           class="text-white hover:text-gray-300">Заявка на пополнение</a></li>
                     <li><a href="{{ route('change-roles') }}"     class="text-white hover:text-gray-300">Управление ролями</a></li>
                     <li><a href="{{ route('news') }}"             class="text-white hover:text-gray-300">Новости клиники</a></li>
                 @endif
