@@ -17,6 +17,7 @@ export function initUsers() {
                         <td><input disabled value="${u.phone || ''}" class="w-full border-none"></td>
                         <td><input disabled value="${u.email || ''}" class="w-full border-none"></td>
                         <td><input disabled value="${u.address || ''}" class="w-full border-none"></td>
+                        <td><input disabled value="${u.passport || ''}" class="w-full border-none"></td>
                         <td class="action-buttons">
                             <button class="edit-btn btn-icon">✏️</button>
                             <button class="delete-btn btn-icon">🗑️</button>
@@ -53,9 +54,9 @@ export function initUsers() {
                 `;
 
                 cell.querySelector('.update-btn').onclick = () => {
-                    const [last_name, first_name, middle_name, phone, email, address] =
+                    const [last_name, first_name, middle_name, phone, email, address, passport] =
                         Array.from(row.querySelectorAll('input')).map(i => i.value);
-                    axios.put(`/api/users/${id}`, { last_name, first_name, middle_name, phone, email, address })
+                    axios.put(`/api/users/${id}`, { last_name, first_name, middle_name, phone, email, address, passport })
                         .then(loadUsers)
                         .catch(() => showError('Ошибка при обновлении'));
                 };
@@ -75,6 +76,7 @@ export function initUsers() {
                 <td><input placeholder="Телефон" class="new-input w-full" /></td>
                 <td><input placeholder="Email" class="new-input w-full" /></td>
                 <td><input placeholder="Адрес" class="new-input w-full" /></td>
+                <td><input placeholder="Паспорт" class="new-input w-full" /></td>
                 <td class="action-buttons">
                     <button class="save-btn btn-icon confirm-btn">✅</button>
                     <button class="cancel-btn btn-icon cancel-btn">❌</button>
@@ -82,10 +84,10 @@ export function initUsers() {
             table.querySelector('tbody').prepend(tr);
 
             tr.querySelector('.save-btn').onclick = () => {
-                const [last_name, first_name, middle_name, phone, email, address] =
+                const [last_name, first_name, middle_name, phone, email, address, passport] =
                     Array.from(tr.querySelectorAll('.new-input')).map(i => i.value);
                 axios.post('/api/users', {
-                    last_name, first_name, middle_name, phone, email, address
+                    last_name, first_name, middle_name, phone, email, address, passport
                 }).then(loadUsers)
                     .catch(() => showError('Ошибка при создании'));
             };

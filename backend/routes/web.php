@@ -11,6 +11,9 @@ use App\Http\Controllers\PageController;
 
 
 Route::get('/my-past-appointments', [PageController::class, 'pastAppointments'])->name('my-past-appointments');
+Route::get('/pet-history/{id}', function ($id) {
+    return view('pages.pet-history', compact('id'));
+})->name('pet-history');
 
 
 

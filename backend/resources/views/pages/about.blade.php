@@ -166,6 +166,7 @@
                 <tr><th>Email</th><td><input disabled name="email" value="{{ $user->email }}"></td></tr>
                 <tr><th>Телефон</th><td><input disabled name="phone" value="{{ $user->phone }}"></td></tr>
                 <tr><th>Адрес</th><td><input disabled name="address" value="{{ $user->address }}"></td></tr>
+                <tr><th>Паспорт</th><td><input disabled name="passport" value="{{ $user->passport }}"></td></tr>
             </table>
 
             <div class="btn-row">

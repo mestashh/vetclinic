@@ -55,21 +55,6 @@ class UserController extends Controller
         return response()->json(['data' => $result]);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public function index(Request $request)
     {
         return response()->json([
@@ -86,6 +71,7 @@ class UserController extends Controller
             'phone'       => 'nullable|string|max:20',
             'email'       => 'required|email|unique:users,email',
             'address'     => 'nullable|string|max:255',
+            'passport' => 'nullable|string|max:255',
         ]);
 
         $validated['password'] = bcrypt('password');
@@ -104,6 +90,7 @@ class UserController extends Controller
             'phone'       => 'nullable|string|max:20',
             'email'       => "required|email|unique:users,email,{$user->id}",
             'address'     => 'nullable|string|max:255',
+            'passport' => 'nullable|string|max:255',
         ]);
 
         $user->update($validated);

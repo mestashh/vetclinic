@@ -7,8 +7,13 @@ use App\Models\Appointment;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Models\ServiceItem;
+
+
 class AppointmentController extends Controller
 {
+
+
     public function complete(Request $request, Appointment $appointment)
     {
         $data = $request->validate([
@@ -20,25 +25,25 @@ class AppointmentController extends Controller
         DB::transaction(function () use ($appointment, $data) {
             $appointment->status = 'completed';
             if (isset($data['comment'])) {
-                $appointment->comment = $data['comment']; // если поле добавлено в таблицу
+                $appointment->comment = $data['comment'];
             }
             $appointment->save();
 
-            // Обновим связи с услугами
-            $appointment->services()->detach();
+            // Получаем ID услуг из выбранных вариантов
+            $serviceIds = DB::table('service_items')
+                ->whereIn('id', $data['service_item_ids'] ?? [])
+                ->pluck('service_id')
+                ->unique()
+                ->values();
 
-            if (!empty($data['service_item_ids'])) {
-                // Получим ID услуг по переданным service_item_ids
-                $serviceIds = DB::table('service_items')
-                    ->whereIn('id', $data['service_item_ids'])
-                    ->pluck('service_id')
-                    ->unique()
-                    ->values();
+            // Привязываем услуги к приёму
+            $appointment->services()->sync($serviceIds);
 
-                $appointment->services()->sync($serviceIds);
+            // ⬇️ Списываем количество
+            foreach ($data['service_item_ids'] ?? [] as $itemId) {
+                ServiceItem::where('id', $itemId)->decrement('quantity');
             }
         });
-
         return response()->json(['message' => 'Приём завершён успешно']);
     }
 

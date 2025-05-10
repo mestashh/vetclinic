@@ -11,8 +11,9 @@
             @auth
                 @if(Auth::user()->role == 'client')
                     <li><a href="{{ route('about') }}"            class="text-white hover:text-gray-300">Обо мне</a></li>
+                    <li><a href="{{ route('services') }}"         class="text-white hover:text-gray-300">Услуги</a></li>
                     <li><a href="{{ route('my-appointments') }}"  class="text-white hover:text-gray-300">Записаться на прием</a></li>
-                        <li><a href="{{ route('my-past-appointments') }}" class="text-white hover:text-gray-300">История приёмов</a></li>
+                    <li><a href="{{ route('my-past-appointments') }}" class="text-white hover:text-gray-300">История приёмов</a></li>
                     <li><a href="{{ route('news') }}"             class="text-white hover:text-gray-300">Новости клиники</a></li>
                 @endif
 
@@ -27,6 +28,7 @@
                     <li><a href="{{ route('users') }}"            class="text-white hover:text-gray-300">Клиенты</a></li>
                     <li><a href="{{ route('appointments') }}"     class="text-white hover:text-gray-300">Приёмы</a></li>
                     <li><a href="{{ route('pets') }}"             class="text-white hover:text-gray-300">Питомцы</a></li>
+                    <li><a href="{{ route('services') }}"         class="text-white hover:text-gray-300">Услуги</a></li>
                 @endif
 
                 @if(Auth::user()->role == 'superadmin')

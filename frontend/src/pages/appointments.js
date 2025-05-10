@@ -106,6 +106,7 @@ export function initAppointments() {
         </select>`;
 
         const petCell = `<select class="pet-select w-full border-none"${isNew ? '' : ' disabled'}>
+
             <option value="">Питомец</option>
             ${pets.map(p => `
                 <option value="${p.id}"${appt?.pet_id === p.id ? ' selected' : ''}>${p.name}</option>`).join('')}

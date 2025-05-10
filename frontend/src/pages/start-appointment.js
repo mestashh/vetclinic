@@ -57,7 +57,10 @@ export function initStartAppointment() {
 
         const date = new Date(appt.scheduled_at).toLocaleString();
         const client = appt.user ? `${appt.user.last_name} ${appt.user.first_name}` : 'неизвестно';
-        const pet = appt.pet?.name || '—';
+        const petName = appt.pet?.name || '—';
+        const petLink = appt.pet
+            ? `<a href="/pet-history/${appt.pet.id}" style="color:#2563eb; text-decoration:underline;" target="_blank">${petName}</a>`
+            : '—';
         const selectedServiceIds = appt.services?.map(s => s.id) || [];
 
         const serviceCheckboxes = allServices.map(service => {
@@ -95,7 +98,8 @@ export function initStartAppointment() {
         info.innerHTML = `
             <p><strong>Дата:</strong> ${date}</p>
             <p><strong>Клиент:</strong> ${client}</p>
-            <p><strong>Питомец:</strong> ${pet}</p>
+            <p><strong>Паспорт:</strong> ${appt.user?.passport || '—'}</p>
+            <p><strong>Питомец:</strong> ${petLink}</p>
             <p><strong>Статус:</strong> ${translateStatus(appt.status)}</p>
 
             <div style="margin-top: 1rem;">

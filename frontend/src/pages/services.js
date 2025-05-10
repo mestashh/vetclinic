@@ -5,6 +5,7 @@ export function initServices() {
     const addBtn = document.getElementById('addServiceBtn');
     const searchInput = document.getElementById('searchInput');
     const isSuperAdmin = window.currentUserRole === 'superadmin';
+    const isClient = window.currentUserRole === 'client';
     let services = [];
 
     function showError(msg) {
@@ -60,9 +61,10 @@ export function initServices() {
                         ${(service.items || []).map(item => `
                             <li data-item-id="${item.id}" style="margin-bottom: 0.5rem;">
                                 <span class="item-content">
-                                    <strong>${item.name}</strong> — ${item.price}₽ (${item.quantity} шт.)
-                                    ${item.description ? `&nbsp;— ${item.description}` : ''}
-                                </span>
+    <strong>${item.name}</strong> — ${item.price}₽ 
+    ${!isClient ? `(${item.quantity} шт.)` : ''}
+    ${item.description ? `&nbsp;— ${item.description}` : ''}
+</span>
                                 ${isSuperAdmin ? `
                                 <span class="variant-buttons" style="margin-left: 1rem;">
                                     <button class="edit-variant btn-icon edit-btn">✏️</button>

@@ -117,6 +117,7 @@
                     <th>Телефон</th>
                     <th>Email</th>
                     <th>Адрес</th>
+                    <th>Паспорт</th>
                     <th class="actions">Действия</th>
                 </tr>
                 </thead>
