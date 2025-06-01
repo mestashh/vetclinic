@@ -4,8 +4,24 @@ export function initStartAppointment() {
 
     if (!select || !info) return;
 
-    let appointments = [];
-    let allServices = [];
+    let appointments = window.initialAppointments || [];
+    if (window.initialAppointments) delete window.initialAppointments;
+    let allServices = window.initialServices || [];
+    if (window.initialServices) delete window.initialServices;
+    const preselectedId = typeof window.selectedAppointmentId !== 'undefined' ? window.selectedAppointmentId : null;
+    if (typeof window.selectedAppointmentId !== 'undefined') delete window.selectedAppointmentId;
+
+    function renderOptions() {
+        select.innerHTML = '<option value="">— выберите приём —</option>' + appointments.map(appt => {
+            const date = new Date(appt.scheduled_at).toLocaleString();
+            const client = appt.user?.name || `${appt.user?.last_name || ''} ${appt.user?.first_name || ''}`;
+            return `<option value="${appt.id}">${client.trim()} — ${date}</option>`;
+        }).join('');
+        if (preselectedId) {
+            select.value = preselectedId;
+            select.dispatchEvent(new Event('change'));
+        }
+    }
 
     async function loadAppointments() {
         try {
@@ -24,11 +40,7 @@ export function initStartAppointment() {
 
             allServices = resServices.data.data || [];
 
-            select.innerHTML = '<option value="">— выберите приём —</option>' + appointments.map(appt => {
-                const date = new Date(appt.scheduled_at).toLocaleString();
-                const client = appt.user?.name || `${appt.user?.last_name || ''} ${appt.user?.first_name || ''}`;
-                return `<option value="${appt.id}">${client.trim()} — ${date}</option>`;
-            }).join('');
+            renderOptions();
         } catch (err) {
             alert('Ошибка загрузки приёмов или услуг');
         }
@@ -219,5 +231,9 @@ export function initStartAppointment() {
         }
     }
 
-    loadAppointments();
+    if (appointments.length && allServices.length) {
+        renderOptions();
+    } else {
+        loadAppointments();
+    }
 }

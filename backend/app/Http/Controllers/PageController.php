@@ -23,11 +23,30 @@ class PageController extends Controller
 
     public function startAppointment(Appointment $appointment)
     {
-        return view('pages.start-appointment', compact('appointment'));
+        $appointments = Appointment::with(['user', 'pet', 'veterinarian.user', 'services'])
+            ->whereHas('veterinarian', function ($q) {
+                $q->where('user_id', auth()->id());
+            })
+            ->where('status', 'scheduled')
+            ->whereDate('scheduled_at', now())
+            ->get();
+        $services = Service::with('items')->get();
+        $selectedAppointmentId = $appointment->id;
+
+        return view('pages.start-appointment', compact('appointments', 'services', 'selectedAppointmentId'));
     }
     public function selectAppointment()
     {
-        return view('pages.start-appointment');
+        $appointments = Appointment::with(['user', 'pet', 'veterinarian.user', 'services'])
+            ->whereHas('veterinarian', function ($q) {
+                $q->where('user_id', auth()->id());
+            })
+            ->where('status', 'scheduled')
+            ->whereDate('scheduled_at', now())
+            ->get();
+        $services = Service::with('items')->get();
+
+        return view('pages.start-appointment', compact('appointments', 'services'));
     }
 
     public function aboutMe()

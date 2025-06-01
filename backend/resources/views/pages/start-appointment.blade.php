@@ -64,6 +64,15 @@
 
         <select id="appointmentSelect">
             <option value="">— выберите приём —</option>
+            @foreach($appointments as $a)
+                @php
+                    $label = trim(($a->user->last_name ?? '') . ' ' . ($a->user->first_name ?? ''));
+                    $date = \Carbon\Carbon::parse($a->scheduled_at)->format('d.m.Y H:i');
+                @endphp
+                <option value="{{ $a->id }}" @selected(isset($selectedAppointmentId) && $selectedAppointmentId == $a->id)>
+                    {{ $label }} — {{ $date }}
+                </option>
+            @endforeach
         </select>
 
         <div id="appointmentInfo" class="appointment-details" style="display:none;"></div>
@@ -74,6 +83,11 @@
     <script>
         window.currentUserRole = '{{ Auth::user()->role }}';
         window.currentUserId = {{ Auth::id() }};
+        window.initialAppointments = @json($appointments);
+        window.initialServices = @json($services);
+        @isset($selectedAppointmentId)
+            window.selectedAppointmentId = {{ $selectedAppointmentId }};
+        @endisset
     </script>
     @vite(['src/app.js'])
 @endsection
