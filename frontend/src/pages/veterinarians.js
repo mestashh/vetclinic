@@ -1,18 +1,18 @@
 export function initVets() {
     const table = document.getElementById('vetsTable');
     const addBtn = document.getElementById('addVetBtn');
+    let initialVets = typeof window.initialVets !== 'undefined' ? window.initialVets : null;
+    if (typeof window.initialVets !== 'undefined') delete window.initialVets;
 
     function showError(msg) {
         alert(msg);
     }
 
-    function loadVets() {
-        axios.get('/api/veterinarians')
-            .then(({ data }) => {
-                const html = (data.data || []).map(v => {
-                    const fullName = [v.user?.last_name, v.user?.first_name, v.user?.middle_name]
-                        .filter(Boolean).join(' ');
-                    return `
+    function renderVets(vs) {
+        const html = (vs || []).map(v => {
+            const fullName = [v.user?.last_name, v.user?.first_name, v.user?.middle_name]
+                .filter(Boolean).join(' ');
+            return `
                     <tr data-id="${v.id}" class="bg-white border-b hover:bg-gray-50">
                         <td class="px-4 py-2"><input disabled value="${fullName}" class="vet-input w-full border-none"></td>
                         <td class="px-4 py-2"><input disabled value="${v.specialization || ''}" class="vet-input w-full border-none"></td>
@@ -24,9 +24,16 @@ export function initVets() {
                         </td>
                     </tr>`;
                 }).join('');
+        table.querySelector('tbody').innerHTML = html;
+        attachEvents();
+    }
 
                 table.querySelector('tbody').innerHTML = html;
                 attachEvents();
+    function loadVets() {
+        axios.get('/api/veterinarians')
+            .then(({ data }) => {
+                renderVets(data.data || []);
             })
             .catch(() => showError("Не удалось загрузить ветеринаров"));
     }
@@ -103,5 +110,14 @@ export function initVets() {
         };
     }
 
-    loadVets();
+   if (table.querySelector('tbody').children.length === 0) {
+        if (initialVets !== null) {
+            renderVets(initialVets);
+            initialVets = null;
+        } else {
+            loadVets();
+        }
+    } else {
+        attachEvents();
+    }
 }

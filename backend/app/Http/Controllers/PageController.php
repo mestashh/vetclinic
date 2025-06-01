@@ -83,14 +83,24 @@ class PageController extends Controller
     public function appointments(Request $request)
     {
         $date = $request->input('date');
-        $query = Appointment::with(['user', 'pet', 'veterinarian', 'services']);
+        $query = Appointment::with(['user', 'pet', 'veterinarian.user', 'services']);
 
         if ($date) {
             $query->whereDate('scheduled_at', $date);
         }
 
         $appointments = $query->get();
-        return view('pages.appointments', compact('appointments', 'date'));
+        $users = User::select('id', 'first_name', 'last_name', 'middle_name')->get();
+        $pets = Pet::with('client')->get();
+        $veterinarians = Veterinarian::with('user')->get();
+
+        return view('pages.appointments', compact(
+            'appointments',
+            'date',
+            'users',
+            'pets',
+            'veterinarians'
+        ));
     }
 
     public function services()
@@ -100,12 +110,15 @@ class PageController extends Controller
     public function veterinarians(Request $request)
     {
         $search = $request->input('search');
-        $query = Veterinarian::query();
+        $query = Veterinarian::with('user');
 
         if ($search) {
-            $query->where('first_name', 'like', "%{$search}%")
-                ->orWhere('last_name', 'like', "%{$search}%")
-                ->orWhere('specialty', 'like', "%{$search}%");
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('user', function ($u) use ($search) {
+                    $u->where('first_name', 'like', "%{$search}%")
+                        ->orWhere('last_name', 'like', "%{$search}%");
+                })->orWhere('specialization', 'like', "%{$search}%");
+            });
         }
 
         $veterinarians = $query->get();

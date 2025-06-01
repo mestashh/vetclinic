@@ -14,9 +14,14 @@ export function initAppointments() {
     const addBtn = document.getElementById('addAppointmentBtn');
     const isAdmin = ['admin', 'superadmin'].includes(window.currentUserRole);
 
-    let users = [];
-    let veterinarians = [];
-    let pets = [];
+    let users = window.initialUsers || [];
+    if (window.initialUsers) delete window.initialUsers;
+    let veterinarians = window.initialVets || [];
+    if (window.initialVets) delete window.initialVets;
+    let pets = window.initialPets || [];
+    if (window.initialPets) delete window.initialPets;
+    let initialAppointments = typeof window.initialAppointments !== 'undefined' ? window.initialAppointments : null;
+    if (typeof window.initialAppointments !== 'undefined') delete window.initialAppointments;
 
     const SLOT_TIMES = [
         { h: 10, m: 0 }, { h: 11, m: 30 },
@@ -30,6 +35,9 @@ export function initAppointments() {
     }
 
     async function loadRefs() {
+        if (users.length && veterinarians.length && pets.length) {
+            return;
+        }
         try {
             const [usersRes, vetsRes, petsRes] = await Promise.all([
                 axios.get('/api/users'),
@@ -141,12 +149,16 @@ export function initAppointments() {
 </tr>`;
 
     }
+    async function renderAppointments(arr) {
+        tableBody.innerHTML = (await Promise.all(arr.map(makeRow))).join('');
+        applySearch();
+    }
+
     async function loadAppointments() {
         try {
             const { data } = await axios.get('/api/appointments');
             let arr = Array.isArray(data) ? data : (data.data || []);
-            tableBody.innerHTML = (await Promise.all(arr.map(makeRow))).join('');
-            applySearch();
+            await renderAppointments(arr);
         } catch (e) {
             showError("Ошибка загрузки приёмов");
         }
@@ -250,5 +262,16 @@ export function initAppointments() {
     document.getElementById('searchInput')?.addEventListener('input', applySearch);
 
 
-    loadRefs().then(loadAppointments);
+    loadRefs().then(() => {
+        if (tableBody.children.length === 0) {
+            if (initialAppointments !== null) {
+                renderAppointments(initialAppointments);
+                initialAppointments = null;
+            } else {
+                loadAppointments();
+            }
+        } else {
+            applySearch();
+        }
+    });
 }

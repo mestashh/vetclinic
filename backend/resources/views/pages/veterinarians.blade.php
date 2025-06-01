@@ -109,12 +109,30 @@
                     <th class="actions">Действия</th>
                 </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                @foreach($veterinarians as $v)
+                    <tr data-id="{{ $v->id }}" class="bg-white border-b hover:bg-gray-50">
+                        <td class="px-4 py-2">
+                            <input disabled value="{{ trim(optional($v->user)->last_name.' '.optional($v->user)->first_name.' '.optional($v->user)->middle_name) }}" class="vet-input w-full border-none">
+                        </td>
+                        <td class="px-4 py-2"><input disabled value="{{ $v->specialization ?? '' }}" class="vet-input w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="{{ $v->user->phone ?? '' }}" class="vet-input w-full border-none"></td>
+                        <td class="px-4 py-2"><input disabled value="{{ $v->user->email ?? '' }}" class="vet-input w-full border-none"></td>
+                        <td class="px-4 py-2 action-buttons">
+                            <button class="edit-btn btn-icon">✏️</button>
+                            <button class="delete-btn btn-icon">🗑️</button>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
             </table>
         </div>
     </div>
 @endsection
 
 @section('scripts')
+    <script>
+        window.initialVets = @json($veterinarians);
+    </script>
     @vite(['src/app.js'])
 @endsection
