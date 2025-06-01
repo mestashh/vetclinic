@@ -10,15 +10,18 @@ export function initOrdersPage() {
     const ordersList = document.getElementById('ordersList');
     const totalPriceEl = document.getElementById('totalPrice');
 
-    let allServices = [];
+    let allServices = window.initialServices || [];
+    let ordersData = window.initialOrders || [];
+    function populateServices() {
+        serviceSelect.innerHTML = '<option value="">— выберите услугу —</option>' + allServices.map(s => `
+            <option value="${s.id}">${s.name}</option>
+        `).join('');
+    }
 
     async function loadServices() {
         const res = await axios.get('/api/services?include=items');
         allServices = res.data.data || [];
-
-        serviceSelect.innerHTML = '<option value="">— выберите услугу —</option>' + allServices.map(s => `
-            <option value="${s.id}">${s.name}</option>
-        `).join('');
+        populateServices();
     }
 
     serviceSelect.onchange = () => {
@@ -77,25 +80,38 @@ export function initOrdersPage() {
             console.error(err);
         }
     };
+    function renderOrders() {
+        const list = ordersData.map(o => `
+            <div class="order-card">
+                <p><strong>Услуга:</strong> ${o.item?.name || '—'}</p>
+                <p><strong>Количество:</strong> ${o.quantity}</p>
+                <p><strong>Комментарий:</strong> ${o.comment || '—'}</p>
+                <p><strong>Дата:</strong> ${new Date(o.created_at).toLocaleString()}</p>
+            </div>
+        `).join('');
+
+        ordersList.innerHTML = '<h2>Ранее оформленные заявки</h2>' + (list || '<p>Нет заявок.</p>');
+    }
 
     async function loadOrders() {
         try {
             const res = await axios.get('/api/orders');
-            const list = res.data.map(o => `
-                <div class="order-card">
-                    <p><strong>Услуга:</strong> ${o.item?.name || '—'}</p>
-                    <p><strong>Количество:</strong> ${o.quantity}</p>
-                    <p><strong>Комментарий:</strong> ${o.comment || '—'}</p>
-                    <p><strong>Дата:</strong> ${new Date(o.created_at).toLocaleString()}</p>
-                </div>
-            `).join('');
-
-            ordersList.innerHTML = '<h2>Ранее оформленные заявки</h2>' + (list || '<p>Нет заявок.</p>');
+            ordersData = res.data;
+            renderOrders();
         } catch (err) {
             ordersList.innerHTML = '<p>Ошибка загрузки заявок</p>';
         }
     }
 
-    loadServices();
-    loadOrders();
+    if (allServices.length) {
+        populateServices();
+    } else {
+        loadServices();
+    }
+
+    if (ordersData.length) {
+        renderOrders();
+    } else {
+        loadOrders();
+    }
 }

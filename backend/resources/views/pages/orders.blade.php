@@ -86,5 +86,9 @@
 @endsection
 
 @section('scripts')
+    <script>
+        window.initialServices = @json($services);
+        window.initialOrders = @json($orders);
+    </script>
     @vite(['src/app.js'])
 @endsection

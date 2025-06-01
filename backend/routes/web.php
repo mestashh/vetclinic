@@ -45,7 +45,7 @@ Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
 });
 
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
-    Route::view('/orders', 'pages.orders')->name('orders');
+    Route::get('/orders', [PageController::class, 'orders'])->name('orders');
     Route::get('/veterinarians', [PageController::class, 'veterinarians'])->name('veterinarians');
     Route::get('/change-roles', [PageController::class, 'changeRoles'])->name('change-roles');
 });

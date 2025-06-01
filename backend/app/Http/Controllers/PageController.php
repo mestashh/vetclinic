@@ -9,6 +9,7 @@ use App\Models\Service;
 use App\Models\Veterinarian;
 use App\Models\News;
 use Illuminate\Http\Request;
+use App\Models\Order;
 
 class PageController extends Controller
 {
@@ -65,6 +66,13 @@ class PageController extends Controller
 
         $users = $query->get();
         return view('pages.users', compact('users', 'search'));
+    }
+
+    public function orders()
+    {
+        $services = Service::with('items')->get();
+        $orders = Order::with('item.service')->latest()->get();
+        return view('pages.orders', compact('services', 'orders'));
     }
 
     public function pets(Request $request)
