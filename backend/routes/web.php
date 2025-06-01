@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\PageController;
 
-// Public routes
+
 Route::get('/', function () {
     return view('home');
 })->name('home');
@@ -14,7 +14,6 @@ Route::get('/register', [AuthController::class, 'showRegister'])->name('register
 Route::post('/register', [AuthController::class, 'register'])->name('register.post');
 Route::get('/news', [PageController::class, 'news'])->name('news');
 
-// Routes requiring authentication for any role
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/services', [PageController::class, 'services'])->name('services');
