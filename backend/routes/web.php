@@ -11,22 +11,6 @@ use App\Http\Controllers\PageController;
 
 
 
-Route::view('/orders', 'pages.orders')->name('orders');
-
-
-
-
-
-
-
-
-Route::get('/my-past-appointments', [PageController::class, 'pastAppointments'])->name('my-past-appointments');
-Route::get('/pet-history/{id}', function ($id) {
-    return view('pages.pet-history', compact('id'));
-})->name('pet-history');
-Route::get('/appointments/start/{appointment}', [PageController::class, 'startAppointment'])->name('appointments.start');
-Route::get('/appointments/start', [PageController::class, 'selectAppointment'])->name('appointments.select');
-Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.post');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -41,6 +25,13 @@ Route::get('/change-roles', function () {
 })->name('change-roles');
 
 Route::middleware('auth')->group(function () {
+    Route::view('/orders', 'pages.orders')->name('orders');
+    Route::get('/my-past-appointments', [PageController::class, 'pastAppointments'])->name('my-past-appointments');
+    Route::get('/pet-history/{id}', function ($id) {
+        return view('pages.pet-history', compact('id'));
+    })->name('pet-history');
+    Route::get('/appointments/start/{appointment}', [PageController::class, 'startAppointment'])->name('appointments.start');
+    Route::get('/appointments/start', [PageController::class, 'selectAppointment'])->name('appointments.select');
     Route::get('/my-appointments', [PageController::class, 'myAppointments'])->name('my-appointments');
     Route::get('/users', [PageController::class, 'users'])->name('users');
     Route::get('/veterinarians', [PageController::class, 'veterinarians'])->name('veterinarians');
