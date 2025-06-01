@@ -2,7 +2,6 @@
 
 <nav style="background-color:#2D3748;padding:1rem; color:white; font-size:1.125rem;">
     <div style="display:flex; justify-content:space-between; align-items:center;">
-        {{-- Левый блок: ссылки --}}
         <ul style="display:flex; flex-direction:row; gap:1rem; list-style:none; margin:0; padding:0;">
             @guest
                 <a href="{{ route('home') }}" class="text-white hover:text-gray-300 px-3 py-2 rounded-md text-sm font-medium">Главная</a>
