@@ -4,6 +4,10 @@ export function initStartAppointment() {
 
     if (!select || !info) return;
 
+    const hasInitialData =
+        typeof window.initialAppointments !== 'undefined' &&
+        typeof window.initialServices !== 'undefined';
+
     let appointments = window.initialAppointments || [];
     if (window.initialAppointments) delete window.initialAppointments;
     let allServices = window.initialServices || [];
@@ -12,11 +16,17 @@ export function initStartAppointment() {
     if (typeof window.selectedAppointmentId !== 'undefined') delete window.selectedAppointmentId;
 
     function renderOptions() {
-        select.innerHTML = '<option value="">— выберите приём —</option>' + appointments.map(appt => {
-            const date = new Date(appt.scheduled_at).toLocaleString();
-            const client = appt.user?.name || `${appt.user?.last_name || ''} ${appt.user?.first_name || ''}`;
-            return `<option value="${appt.id}">${client.trim()} — ${date}</option>`;
-        }).join('');
+        select.innerHTML = '<option value="">— выберите приём —</option>' +
+            appointments.map(appt => {
+                const date = new Date(appt.scheduled_at).toLocaleString();
+                const client = appt.user?.name || `${appt.user?.last_name || ''} ${appt.user?.first_name || ''}`;
+                return `<option value="${appt.id}">${client.trim()} — ${date}</option>`;
+            }).join('');
+
+        if (!appointments.length) {
+            info.style.display = 'block';
+            info.innerHTML = '<em>Нет приёмов на сегодня.</em>';
+        }
         if (preselectedId) {
             select.value = preselectedId;
             select.dispatchEvent(new Event('change'));
@@ -27,7 +37,7 @@ export function initStartAppointment() {
         try {
             const [resAppts, resServices] = await Promise.all([
                 axios.get('/api/appointments'),
-                axios.get('/api/services?include=items')
+                axios.get('/api/services')
             ]);
 
             appointments = resAppts.data.filter(a => {
@@ -231,7 +241,7 @@ export function initStartAppointment() {
         }
     }
 
-    if (appointments.length && allServices.length) {
+    if (hasInitialData) {
         renderOptions();
     } else {
         loadAppointments();
