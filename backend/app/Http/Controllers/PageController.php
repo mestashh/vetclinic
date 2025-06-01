@@ -76,7 +76,8 @@ class PageController extends Controller
         }
 
         $pets = $query->get();
-        return view('pages.pets', compact('pets', 'search'));
+        $users = User::select('id', 'first_name', 'last_name', 'middle_name')->get();
+        return view('pages.pets', compact('pets', 'search', 'users'));
     }
 
     public function appointments(Request $request)

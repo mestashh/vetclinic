@@ -107,5 +107,10 @@ export function initUsers() {
     document.getElementById('searchInput')?.addEventListener('input', applySearch);
 
 
-    loadUsers();
+    if (table.querySelector('tbody').children.length === 0) {
+        loadUsers();
+    } else {
+        attachEvents();
+        applySearch();
+    }
 }

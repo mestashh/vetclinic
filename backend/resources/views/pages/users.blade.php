@@ -105,6 +105,7 @@
 
         <div style="margin-bottom: 1rem; text-align: center;">
             <input type="text" id="searchInput" placeholder="Поиск по клиентам..."
+                   value="{{ $search }}"
                    style="width: 300px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px;" />
         </div>
         <div class="overflow-x-auto">
@@ -121,7 +122,23 @@
                     <th class="actions">Действия</th>
                 </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                @foreach($users as $u)
+                    <tr data-id="{{ $u->id }}">
+                        <td><input disabled value="{{ $u->last_name ?? '' }}" class="w-full border-none"></td>
+                        <td><input disabled value="{{ $u->first_name ?? '' }}" class="w-full border-none"></td>
+                        <td><input disabled value="{{ $u->middle_name ?? '' }}" class="w-full border-none"></td>
+                        <td><input disabled value="{{ $u->phone ?? '' }}" class="w-full border-none"></td>
+                        <td><input disabled value="{{ $u->email ?? '' }}" class="w-full border-none"></td>
+                        <td><input disabled value="{{ $u->address ?? '' }}" class="w-full border-none"></td>
+                        <td><input disabled value="{{ $u->passport ?? '' }}" class="w-full border-none"></td>
+                        <td class="action-buttons">
+                            <button class="edit-btn btn-icon">✏️</button>
+                            <button class="delete-btn btn-icon">🗑️</button>
+                        </td>
+                    </tr>
+                @endforeach
+                </tbody>
             </table>
         </div>
     </div>

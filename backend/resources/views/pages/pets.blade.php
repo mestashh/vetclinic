@@ -102,6 +102,7 @@
         </div>
         <div style="margin-bottom: 1rem; text-align: center;">
             <input type="text" id="searchInput" placeholder="Поиск по питомцам..."
+                   value="{{ $search }}"
                    style="width: 300px; padding: 0.5rem; border: 1px solid #ccc; border-radius: 6px;" />
         </div>
         <table id="petsTable">
@@ -115,7 +116,22 @@
                 <th>Действия</th>
             </tr>
             </thead>
-            <tbody></tbody>
+            <tbody>
+            @foreach($pets as $p)
+                <tr data-id="{{ $p->id }}" class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-4 py-2"><input disabled value="{{ $p->name }}" class="w-full border-none"></td>
+                    <td class="px-4 py-2"><input disabled value="{{ $p->species }}" class="w-full border-none"></td>
+                    <td class="px-4 py-2"><input disabled value="{{ $p->breed ?? '' }}" class="w-full border-none"></td>
+                    <td class="px-4 py-2"><input disabled value="{{ $p->age ?? '' }}" class="w-full border-none"></td>
+                    <td class="px-4 py-2"><input disabled value="{{ optional($p->client)->last_name }} {{ optional($p->client)->first_name }} {{ optional($p->client)->middle_name }}" class="w-full border-none"></td>
+                    <td class="px-4 py-2 action-buttons">
+                        <a href="/pet-history/{{ $p->id }}" class="icon-button" title="История питомца" style="background-color:#0ea5e9; color:white; padding:0.3rem; border-radius:4px; width:32px; text-align:center;">🩺</a>
+                        <button class="edit-btn btn-icon">✏️</button>
+                        <button class="delete-btn btn-icon">🗑️</button>
+                    </td>
+                </tr>
+            @endforeach
+            </tbody>
         </table>
     </div>
 @endsection

@@ -134,8 +134,8 @@ export function initPets() {
 
             axios.post('/api/animals', { name, species, breed, age, client_id })
                 .then(() => {
-                    loadPets();    // ✅ перезагрузка питомцев
-                    tr.remove();   // ✅ удаление строки добавления после успеха
+                    loadPets();
+                    tr.remove();
                 })
                 .catch(() => showError("Ошибка при создании"));
         };
@@ -156,6 +156,11 @@ export function initPets() {
 
     loadRefs().then(() => {
         addBtn.onclick = handleAdd;
-        loadPets();
+        if (table.querySelector('tbody').children.length === 0) {
+            loadPets();
+        } else {
+            attachEvents();
+            applySearch();
+        }
     });
 }
