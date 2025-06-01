@@ -110,7 +110,24 @@
                     @endif
                 </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                @foreach($services as $service)
+                    <tr data-id="{{ $service->id }}" class="service-row">
+                        <td>
+                            <button class="toggle-items" style="margin-right: 5px;">▶️</button>
+                            <span class="service-name">{{ $service->name }}</span>
+                        </td>
+                        <td class="service-desc">{{ $service->description }}</td>
+                        @if(Auth::user()->role === 'superadmin')
+                            <td class="action-buttons">
+                                <button class="add-variant-btn btn-icon confirm-btn">➕ Вариант</button>
+                                <button class="edit-btn btn-icon edit-btn">✏️</button>
+                                <button class="delete-btn btn-icon cancel-btn">🗑️</button>
+                            </td>
+                        @endif
+                    </tr>
+                @endforeach
+                </tbody>
             </table>
         </div>
     </div>
@@ -119,6 +136,7 @@
 @section('scripts')
     <script>
         window.currentUserRole = '{{ Auth::user()->role }}';
+        window.initialServices = @json($services);
     </script>
     @vite(['src/app.js'])
 @endsection

@@ -108,13 +108,21 @@
             </div>
         @endif
 
-        <div id="newsRoot"></div>
+        <div id="newsRoot">
+            @foreach($news as $n)
+                <div class="news-item">
+                    <div class="news-item-title">{{ $n->title }}</div>
+                    <div>{{ $n->text }}</div>
+                </div>
+            @endforeach
+        </div>
     </div>
 @endsection
 
 @section('scripts')
     <script>
         window.currentUserRole = "{{ Auth::check() ? Auth::user()->role : '' }}";
+        window.initialNews = @json($news);
     </script>
     @vite(['src/app.js'])
 @endsection

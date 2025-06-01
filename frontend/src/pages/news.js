@@ -5,6 +5,7 @@ export function initNews() {
     const titleInput = document.getElementById('newsTitle');
     const textInput = document.getElementById('newsText');
     const submitBtn = document.getElementById('newsSubmitBtn');
+    let news = window.initialNews || [];
 
     function showError(msg) {
         alert(msg);
@@ -23,7 +24,8 @@ export function initNews() {
         axios.get('/api/news')
             .then(res => {
                 const data = Array.isArray(res.data) ? res.data : res.data.data;
-                renderNews(data.reverse());
+                news = data.reverse();
+                renderNews(news);
             })
             .catch(() => showError("Ошибка загрузки новостей"));
     }
@@ -52,5 +54,9 @@ export function initNews() {
         };
     }
 
-    loadNews();
+    if (news.length) {
+        renderNews(news);
+    } else {
+        loadNews();
+    }
 }

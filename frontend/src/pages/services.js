@@ -6,7 +6,7 @@ export function initServices() {
     const searchInput = document.getElementById('searchInput');
     const isSuperAdmin = window.currentUserRole === 'superadmin';
     const isClient = window.currentUserRole === 'client';
-    let services = [];
+    let services = window.initialServices || [];
 
     function showError(msg) {
         alert(msg);
@@ -282,7 +282,11 @@ export function initServices() {
             .catch(() => showError('Ошибка загрузки услуг'));
     }
 
-    loadServices();
+    if (services.length) {
+        renderServices();
+    } else {
+        loadServices();
+    }
 }
 
 document.addEventListener('DOMContentLoaded', initServices);

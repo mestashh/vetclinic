@@ -7,6 +7,7 @@ use App\Models\Pet;
 use App\Models\Appointment;
 use App\Models\Service;
 use App\Models\Veterinarian;
+use App\Models\News;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -105,7 +106,8 @@ class PageController extends Controller
 
     public function services()
     {
-        return view('pages.services');
+        $services = Service::with('items')->get();
+        return view('pages.services', compact('services'));
     }
     public function veterinarians(Request $request)
     {
@@ -124,9 +126,17 @@ class PageController extends Controller
         $veterinarians = $query->get();
         return view('pages.veterinarians', compact('veterinarians', 'search'));
     }
+
+    public function changeRoles()
+    {
+        $users = User::all();
+        return view('pages.change-roles', compact('users'));
+    }
+
     public function news()
     {
-        return view('pages.news');
+        $news = News::orderBy('created_at', 'desc')->get();
+        return view('pages.news', compact('news'));
     }
     public function storePet(Request $request)
     {
@@ -162,7 +172,6 @@ class PageController extends Controller
 
         auth()->user()->update($validated);
 
-        // возвращаем простой JSON 200 OK
         return response()->json(['message' => 'Данные обновлены']);
     }
 

@@ -22,7 +22,6 @@ Route::middleware('auth')->group(function () {
     })->name('pet-history');
 });
 
-// Client routes
 Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/about', [PageController::class, 'aboutMe'])->name('about');
     Route::post('/profile/update', [PageController::class, 'updateProfileUser'])->name('profile.update');
@@ -31,28 +30,22 @@ Route::middleware(['auth', 'role:client'])->group(function () {
     Route::get('/my-past-appointments', [PageController::class, 'pastAppointments'])->name('my-past-appointments');
 });
 
-// Veterinarian routes
 Route::middleware(['auth', 'role:vet'])->group(function () {
     Route::get('/appointments/start/{appointment}', [PageController::class, 'startAppointment'])->name('appointments.start');
     Route::get('/appointments/start', [PageController::class, 'selectAppointment'])->name('appointments.select');
 });
 
-// Routes for vet and administrators
 Route::middleware(['auth', 'role:vet,admin,superadmin'])->group(function () {
     Route::get('/appointments', [PageController::class, 'appointments'])->name('appointments');
 });
 
-// Admin routes
 Route::middleware(['auth', 'role:admin,superadmin'])->group(function () {
     Route::get('/users', [PageController::class, 'users'])->name('users');
     Route::get('/pets', [PageController::class, 'pets'])->name('pets');
 });
 
-// Superadmin routes
 Route::middleware(['auth', 'role:superadmin'])->group(function () {
     Route::view('/orders', 'pages.orders')->name('orders');
     Route::get('/veterinarians', [PageController::class, 'veterinarians'])->name('veterinarians');
-    Route::get('/change-roles', function () {
-        return view('pages.change-roles');
-    })->name('change-roles');
+    Route::get('/change-roles', [PageController::class, 'changeRoles'])->name('change-roles');
 });

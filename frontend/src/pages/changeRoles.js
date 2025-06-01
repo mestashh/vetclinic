@@ -2,7 +2,7 @@ export function initChange() {
     const table = document.getElementById('rolesTable');
     const searchInput = document.getElementById('searchInput');
     const roleFilter = document.getElementById('roleFilter');
-    let allUsers = [];
+    let allUsers = window.initialUsers || [];
 
     if (!table) return;
 
@@ -77,5 +77,9 @@ export function initChange() {
 
     searchInput?.addEventListener('input', applyFilters);
     roleFilter?.addEventListener('change', applyFilters);
-    loadUsers();
+    if (allUsers.length) {
+        applyFilters();
+    } else {
+        loadUsers();
+    }
 }

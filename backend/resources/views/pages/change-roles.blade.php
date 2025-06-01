@@ -98,7 +98,22 @@
             </tr>
             </thead>
             <tbody>
-            {{-- JS вставит сюда строки --}}
+            @foreach($users as $u)
+                <tr data-id="{{ $u->id }}">
+                    <td>{{ trim($u->last_name . ' ' . $u->first_name . ' ' . $u->middle_name) }}</td>
+                    <td>{{ $u->email }}</td>
+                    <td>{{ $u->phone }}</td>
+                    <td class="action-buttons">
+                        <select class="role-select">
+                            <option value="client" {{ $u->role === 'client' ? 'selected' : '' }}>Клиент</option>
+                            <option value="vet" {{ $u->role === 'vet' ? 'selected' : '' }}>Ветеринар</option>
+                            <option value="admin" {{ $u->role === 'admin' ? 'selected' : '' }}>Админ</option>
+                            <option value="superadmin" {{ $u->role === 'superadmin' ? 'selected' : '' }}>Супер-админ</option>
+                        </select>
+                        <button class="save-role-btn btn-icon confirm-btn">✅</button>
+                    </td>
+                </tr>
+            @endforeach
             </tbody>
         </table>
     </div>
@@ -108,6 +123,7 @@
     <script>
         window.currentUserRole = '{{ Auth::user()->role }}';
         window.currentUserId = {{ Auth::id() }};
+        window.initialUsers = @json($users);
     </script>
     @vite(['src/app.js'])
 @endsection
