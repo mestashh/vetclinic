@@ -137,5 +137,9 @@
 @endsection
 
 @section('scripts')
+    <script>
+        window.initialPets = @json($pets);
+        window.initialUsers = @json($users);
+    </script>
     @vite(['src/app.js'])
 @endsection

@@ -3,13 +3,19 @@ import axios from 'axios';
 export function initPets() {
     const table = document.getElementById('petsTable');
     const addBtn = document.getElementById('addPetBtn');
-    let users = [];
+    let users = window.initialUsers || [];
+    if (window.initialUsers) delete window.initialUsers;
+    let initialPets = typeof window.initialPets !== 'undefined' ? window.initialPets : null;
+    if (typeof window.initialPets !== 'undefined') delete window.initialPets;
 
     function showError(m) {
         alert(m);
     }
 
     async function loadRefs() {
+        if (users.length) {
+            return;
+        }
         try {
             const res = await axios.get('/api/users');
             users = res.data.data || [];
@@ -17,35 +23,42 @@ export function initPets() {
             showError("Не удалось загрузить клиентов");
         }
     }
+    function renderPets(pets) {
+        const html = pets.map(p => {
+            const userName = p.client
+                ? [p.client.last_name, p.client.first_name, p.client.middle_name].filter(Boolean).join(' ')
+                : '';
+
+            return `
+                <tr data-id="${p.id}" class="bg-white border-b hover:bg-gray-50">
+                    <td class="px-4 py-2"><input disabled value="${p.name}" class="w-full border-none"></td>
+                    <td class="px-4 py-2"><input disabled value="${p.species}" class="w-full border-none"></td>
+                    <td class="px-4 py-2"><input disabled value="${p.breed || ''}" class="w-full border-none"></td>
+                    <td class="px-4 py-2"><input disabled value="${p.age || ''}" class="w-full border-none"></td>
+                    <td class="px-4 py-2"><input disabled value="${userName}" class="w-full border-none"></td>
+                    <td class="px-4 py-2 action-buttons">
+                    <a href="/pet-history/${p.id}" class="icon-button" title="История питомца"
+           style="background-color:#0ea5e9; color:white; padding:0.3rem; border-radius:4px; width:32px; text-align:center;">🩺</a>
+                        <button class="edit-btn btn-icon">✏️</button>
+                        <button class="delete-btn btn-icon">🗑️</button>
+                    </td>
+                </tr>`;
+        }).join('');
+
+        table.querySelector('tbody').innerHTML = html;
+        attachEvents();
+    }
 
     function loadPets() {
+        if (initialPets !== null) {
+            renderPets(initialPets);
+            initialPets = null;
+            return;
+        }
         axios.get('/api/animals')
             .then(({ data }) => {
                 const pets = data.data || [];
-
-                const html = pets.map(p => {
-                    const userName = p.client
-                        ? [p.client.last_name, p.client.first_name, p.client.middle_name].filter(Boolean).join(' ')
-                        : '';
-
-                    return `
-                        <tr data-id="${p.id}" class="bg-white border-b hover:bg-gray-50">
-                            <td class="px-4 py-2"><input disabled value="${p.name}" class="w-full border-none"></td>
-                            <td class="px-4 py-2"><input disabled value="${p.species}" class="w-full border-none"></td>
-                            <td class="px-4 py-2"><input disabled value="${p.breed || ''}" class="w-full border-none"></td>
-                            <td class="px-4 py-2"><input disabled value="${p.age || ''}" class="w-full border-none"></td>
-                            <td class="px-4 py-2"><input disabled value="${userName}" class="w-full border-none"></td>
-                            <td class="px-4 py-2 action-buttons">
-                            <a href="/pet-history/${p.id}" class="icon-button" title="История питомца"
-           style="background-color:#0ea5e9; color:white; padding:0.3rem; border-radius:4px; width:32px; text-align:center;">🩺</a>
-                                <button class="edit-btn btn-icon">✏️</button>
-                                <button class="delete-btn btn-icon">🗑️</button>
-                            </td>
-                        </tr>`;
-                }).join('');
-
-                table.querySelector('tbody').innerHTML = html;
-                attachEvents();
+                renderPets(pets);
             })
             .catch(() => showError("Не удалось загрузить питомцев"));
     }
